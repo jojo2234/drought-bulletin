@@ -1,1 +1,7 @@
 Folder for data
+
+celle.csv
+cellId,polygon
+
+spi.csv
+cellId,mesi,data,spi
