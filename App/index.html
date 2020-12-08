@@ -35,10 +35,6 @@
         <select id="data">
             <option value="data">01-05-2019</option>
         </select>
-        <!--<b>SPI: </b>
-        <select id="spi">
-            <option value="spi">3</option>
-        </select>-->
         <button id="sbm" onclick="mostraSPI()">Mostra</button>
     </div>
     <div id='mapid'></div>
@@ -63,13 +59,16 @@
             valoriDate[i] = (data[i]["data"]);
         }
         document.getElementById("data").innerHTML = '<option value="' + valoriDate[0] + '">' + valoriDate[0] + '</option>';
-        //document.getElementById("spi").innerHTML = '<option value="' + valoriSPI[0] + '">' + valoriSPI[0] + '</option>';
         for (i = 1; i < (valoriDate.length); i++) {
             document.getElementById("data").innerHTML = document.getElementById("data").innerHTML + '<option value="' + valoriDate[i] + '">' + valoriDate[i] + '</option>';   
         }
     });
     }
     function getMed(vet = new Array()){
+        //Se il browser dice Oggetto JSON invalido non è colpa di questa funzione
+        //I dati GEOJSON su mapshader.org si vedono per bene una volta convertiti qui
+        //Sul database sono caricati correttamente
+        //Qual'è il problema?
         var latv = [];
         var lonv = [];
         for(var i=0;i<vet[0].length;i++){
@@ -78,10 +77,10 @@
         }
         var centroXY = [(Math.max(...latv)+Math.min(...latv))/2,(Math.max(...lonv)+Math.min(...lonv))/2];
         if(isNaN(centroXY[0])){
-            centroXY[0] = 41.31014535936951;
+            centroXY[0] = 0;
         }
         if(isNaN(centroXY[1])){
-            centroXY[1] = 13.640983049139183;
+            centroXY[1] = 0;
         }
         return centroXY;
     }
@@ -124,13 +123,13 @@
                     fillOpacity: 0.7
                 };
             }
-            document.getElementById("dtcs").innerHTML = "";//geojsonFeature;
-            L.geoJSON(geojsonFeature).addTo(mymap);
-            L.geoJson(geojsonFeature, { style: style }).addTo(mymap);
+            document.getElementById("dtcs").innerHTML = "";//geojsonFeature;//Stampando e copiando il risultato su blocco note, salvandolo come json e riportandolo su mapshaper.org si vede correttamente
+            var tmpJSON = JSON.parse(geojsonFeature);
+            L.geoJSON(tmpJSON).addTo(mymap); //Ok stavo operando su una stringa e l'avevo dimenticato
+            L.geoJson(tmpJSON, { style: style }).addTo(mymap);
         });
     }
     
-    //window.onload = function () { riempiCampiSelezione() };
 /*
     L.geoJSON(appJSONcen, {
         style: function (feature) {

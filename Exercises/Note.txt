@@ -1,0 +1,15 @@
+celle.json è così formato nota stiamo usando la fascia UTM 33 N to W zone:
+{"type":"FeatureCollection", "features":[
+{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[coordinateX,coordinateY],[coX][coY]..]]},"properties":{"idCella":NumeroIncrementaleCheParteDa1,"fid":???,"utmx":ValoreUTMLatitudineConvertita,"utmy":ValoreUTMLongitudineConvertita,"latCentroid":coY_centro,"lngCentroid":coX_centro}},
+Prossima Riga}},
+Ultima Riga}}
+]}
+
+Per importare un csv:
+Andare in C:\xampp\mysql\bin\
+Avviare mysql -h localhost -u root -p (o senza -p se non c'è passoword)
+Dare use cellespi;
+Dare show tables; giusto per sicurezza
+LOAD DATA INFILE 'C:\Users\Alex\Documents\drought-bulletin-main\data\celle_forDB.csv' INTO TABLE celle FIELDS TERMINATED BY ',' ENCLOSED BY "" LINES TERMINATED BY '\n';
+LOAD DATA INFILE 'celle_forDB.csv' INTO TABLE celle FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';
+LOAD DATA INFILE 'spi_forDB.csv' INTO TABLE spi FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
