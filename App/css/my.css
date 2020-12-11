@@ -1,3 +1,9 @@
-#mapid {height: 380px; width:600px; margin-left: calc(50% - 300px);}
+*{padding:0; margin:0;}
+html, body, #mapid {height: 100%;width: 100vw;}
 h1{text-align:center;}
 #sets{text-align:center;padding: 4px;padding-bottom: 12px;}
+.legenda leaflet-control{border:none;top:0px;left:0px;z-index: 1001;}
+.mainBar {position: absolute;width: 320px;height: 40px;z-index: 1001;top: auto;left: 0;background: #fff; text-align: center; border-radius: 8px;}
+.mainBar span{padding: 2px; margin: 2px; padding-right: 10px;padding-left:10px; font-weight: bold; font-family: Verdana, Geneva, Tahoma, sans-serif;}
+.mainBar span *{margin-top: 12px;}
+ 

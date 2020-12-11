@@ -132,16 +132,21 @@
 	pointer-events: none;
 	}
 .leaflet-top {
-	top: 0;
+	top: 120px;
 	}
 .leaflet-right {
 	right: 0;
+	top: 10px;
+	margin-right: 10px;
 	}
 .leaflet-bottom {
 	bottom: 0;
+	top: calc(100% - 15px);
+	margin-right: 0px;
+	padding-right:0px;
 	}
 .leaflet-left {
-	left: 0;
+	left: calc(-70px + 100%);
 	}
 .leaflet-control {
 	float: left;
@@ -287,7 +292,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	display: block;
 	text-align: center;
 	text-decoration: none;
-	color: black;
+	color: rgb(57, 58, 59);
 	}
 .leaflet-bar a,
 .leaflet-control-layers-toggle {
@@ -339,6 +344,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	font-size: 22px;
 	}
 
+.leaflet-control-zoom-in:hover{
+-webkit-box-shadow: inset -1px 3px 8px 5px #fffed9, 2px 5px 16px 0px #feffc8, 5px 5px 15px 5px rgba(0,0,0,0); 
+box-shadow: inset -1px 3px 8px 5px #fffed9, 2px 5px 16px 0px #feffc8, 5px 5px 15px 5px rgba(0,0,0,0);
+}
+.leaflet-control-zoom-out:hover{
+-webkit-box-shadow: inset -1px 3px 8px 5px #fffed9, 2px 5px 16px 0px #feffc8, 5px 5px 15px 5px rgba(0,0,0,0); 
+box-shadow: inset -1px 3px 8px 5px #fffed9, 2px 5px 16px 0px #feffc8, 5px 5px 15px 5px rgba(0,0,0,0);
+}
 
 /* layers control */
 
@@ -379,7 +392,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	padding-right: 5px;
 	}
 .leaflet-control-layers-selector {
-	margin-top: 2px;
+	margin-top: 4px;
+	margin-left: 8px;
+	margin-right: 8px;
 	position: relative;
 	top: 1px;
 	}
@@ -456,7 +471,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	}
 .leaflet-touch .leaflet-control-layers,
 .leaflet-touch .leaflet-bar {
-	border: 2px solid rgba(0,0,0,0.2);
+	border: 1px solid rgba(0,0,0,0.2);
 	background-clip: padding-box;
 	}
 

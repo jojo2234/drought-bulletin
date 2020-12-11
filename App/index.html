@@ -3,18 +3,23 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="author" content="Alessandro Mazzeo" />
-    <title>Mappa Prova</title>
+    <title>Drought Bulletin</title>
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <link rel="stylesheet" href="css/my.css" />
+    <link rel="icon" href="img/favicon.png" />
+    <script>
+        if (navigator.userAgent.search(".NET") >= 0) {
+            alert("Attenzione, il vostro browser potrebbe non essere supportato.")
+        }
+    </script>
     <script src="js/lib.js"></script>
     <script src="leaflet/leaflet.js"></script>
     <script src="js/jquery.min.js"></script>
 </head>
-
 <body>
-    <h1>Mappa di prova</h1>
+<!--
     <div id="sets">
         <b>Mesi da considerare: </b>
         <select id="mesi" onchange="riempiCampiData()">
@@ -30,20 +35,70 @@
             <option value="data">01-05-2019</option>
         </select>
         <button id="sbm" onclick="mostraSPI()">Mostra</button>
-    </div>
+    </div>-->
     <div id='mapid'></div>
-    <div id="dtcs"></div>
+    <!--<div id="dtcs"></div>-->
 </body>
-<script>var mymap = L.map('mapid').setView([42.60744445999161, 11.7342599416889], 7);
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
+<script>
+var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        layers: [satellite, standard],
+        accessToken: 'your.mapbox.access.token'
+    })
+var streets   = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        layers: [satellite, standard],
+        accessToken: 'your.mapbox.access.token'
+    })
+
+var standard = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
         id: 'mapbox/streets-v11',
         tileSize: 512,
         zoomOffset: -1,
         accessToken: 'your.mapbox.access.token'
-    }).addTo(mymap);
+    });
+
+//var mymap = L.map('mapid').setView([42.60744445999161, 11.7342599416889], 7);
+var mymap = L.map('mapid', {
+        center: [42.60744445999161, 11.7342599416889],
+        zoom: 7,
+        layers: [satellite, standard]
+    });
+/*L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: 'your.mapbox.access.token'
+    }).addTo(mymap);*/
     /*'mapbox/satellite-v9'*/
+
+    var baseMaps = {
+    "Satellite": satellite,
+    "Streets": standard
+    };
+
+    var overlayMaps = {
+        "Standard": standard
+    };
+
+    L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+
+    var baseMaps = {
+    "<span>Satellite</span>": satellite,
+    "<span>Streets</span>": standard
+    };
 
     function riempiCampiData() {
         var mesesel = document.getElementById("mesi").value;
@@ -59,10 +114,6 @@
     });
     }
     function getMed(vet = new Array()){
-        //Se il browser dice Oggetto JSON invalido non è colpa di questa funzione
-        //I dati GEOJSON su mapshader.org si vedono per bene una volta convertiti qui
-        //Sul database sono caricati correttamente
-        //Qual'è il problema?
         var latv = [];
         var lonv = [];
         for(var i=0;i<vet[0].length;i++){
@@ -83,46 +134,78 @@
     function mostraSPI() {
         var mesesel = document.getElementById("mesi").value;
         var datael = document.getElementById("data").value;
-        document.getElementById("dtcs").innerHTML = "<p style='color:red;text-align:center;'>Wait some minutes.</p>";
         $.getJSON("api/queries.php?funzione=2:"+mesesel+":"+datael, function (data) {
             var centroidXY = [0,0];
             centroidXY = getMed(JSON.parse(data[0]["Poligono"]));//Se nel database il poligono non è rinchiuso tra virgolette
             var utmCoords = [0,0];
-            MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(13.222), utmCoords);
+            MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(centroidXY[1]), utmCoords);
             geojsonFeature += '{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[0]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[0]["ID"])+',"spi":'+JSON.parse(data[0]["SPI"])+',"utmx":'+(utmCoords[0])+',"utmy":'+(utmCoords[1])+',"latCentroid":'+centroidXY[1]+',"lngCentroid":'+centroidXY[0]+'}}';
             for (i = 1; i < data.length; i++) {
                 centroidXY = getMed(JSON.parse(data[i]["Poligono"]));
-                MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(13.222), utmCoords);
+                MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(centroidXY[1]), utmCoords);
                 geojsonFeature += ',{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[i]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[i]["ID"])+',"spi":'+JSON.parse(data[i]["SPI"])+',"utmx":'+(utmCoords[0])+',"utmy":'+(utmCoords[1])+',"latCentroid":'+centroidXY[1]+',"lngCentroid":'+centroidXY[0]+'}}';
             }
             geojsonFeature += ']}';
             function getColor(d) {
-                return d > 3 ? '#800026' :
-                    d > 2 ? '#BD0026' :
-                        d > 1 ? '#E31A1C' :
-                            d > 0 ? '#FC4E2A' :
-                                d > -1 ? '#FD8D3C' :
-                                    d > -2 ? '#FEB24C' :
-                                        d > -3 ? '#FED976' :
-                                            '#FFEDA0';
+                return d > 3 ? '#000' : //nero
+                    d > 2 ? '#2f71ec' : //blu
+                        d > 1.5 ? '#5af53b' : //verde
+                            d > -1.5 ? '#d9dadb' : //Grigio chiaro
+                                d > -2 ? '#eea724' ://arancione
+                                    d > -3 ? '#e01f1f' : //rosso
+                                        d > -4 ? '#6b0404' : //rosso scuro o marrone
+                                            '#da22ac';
             }
 
             function style(feature) {
                 return {
                     fillColor: getColor(feature.properties.spi),
-                    weight: 2,
-                    opacity: 1,
+                    weight: 0,
+                    opacity: 0,
                     color: 'white',
-                    dashArray: '3',
-                    fillOpacity: 0.7
+                    dashArray: '1',
+                    fillOpacity: 1
                 };
             }
-            document.getElementById("dtcs").innerHTML = "";//geojsonFeature;//Stampando e copiando il risultato su blocco note, salvandolo come json e riportandolo su mapshaper.org si vede correttamente
             var tmpJSON = JSON.parse(geojsonFeature);
-            L.geoJSON(tmpJSON).addTo(mymap); //Ok stavo operando su una stringa e l'avevo dimenticato
+            L.geoJSON(tmpJSON).addTo(mymap);
             L.geoJson(tmpJSON, { style: style }).addTo(mymap);
         });
     }
+
+    var legend = L.control({position: 'topleft'});
+    legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'legenda');
+    div.innerHTML = '<div class="mainBar"><span>Data: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option><option value="2019-06-01">2019-06-01</option></select></span><span> Mese: <select><option value="1">1</option><option value="2">2</option></select></span></div>';
+    div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
+    return div;
+    };
+    legend.addTo(mymap);
+
+    document.getElementsByClassName('legenda leaflet-control')[0].style = "top:20px;left:16px;";
+    document.getElementsByClassName('leaflet-control-container')[0].append(document.getElementsByClassName('legenda leaflet-control')[0]);
+    //document.getElementsByClassName('legenda leaflet-control')[0].style = "top:0px;left:0px;visibility:hidden;display:none;";
+    var imel = document.createElement("img");
+    imel.setAttribute("src", "img/s.png");
+    imel.setAttribute("width", "14");
+    imel.setAttribute("style","padding-left: 5px;vertical-align: middle;");
+    var imal = document.createElement("img");
+    imal.setAttribute("src", "img/l.png");
+    imal.setAttribute("width", "14");
+    imal.setAttribute("style","padding-left: 10px;vertical-align: middle;");
+    document.getElementsByTagName('label')[0].append(imel);
+    document.getElementsByTagName('label')[1].append(imal);
+    document.getElementsByTagName('label')[0].firstChild.style="display: inline;";
+    document.getElementsByTagName('label')[1].firstChild.style="display: inline;";
+/*
+    var legend = L.control({position: 'topright'});
+    legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info legend');
+    div.innerHTML = '<select id="mesi" onchange="riempiCampiData()"><option value="1">1</option><option value="3">3</option><option value="6">6</option><option value="9">9</option><option value="12">12</option><option value="24">24</option></select>';
+    div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
+    return div;
+    };
+    legend.addTo(mymap);*/
     
 /*
     L.geoJSON(appJSONcen, {
