@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -19,25 +18,7 @@
     <script src="js/jquery.min.js"></script>
 </head>
 <body>
-<!--
-    <div id="sets">
-        <b>Mesi da considerare: </b>
-        <select id="mesi" onchange="riempiCampiData()">
-            <option value="1">1</option>
-            <option value="3">3</option>
-            <option value="6">6</option>
-            <option value="9">9</option>
-            <option value="12">12</option>
-            <option value="24">24</option>
-        </select>
-        <b>Data: </b>
-        <select id="data">
-            <option value="data">01-05-2019</option>
-        </select>
-        <button id="sbm" onclick="mostraSPI()">Mostra</button>
-    </div>-->
     <div id='mapid'></div>
-    <!--<div id="dtcs"></div>-->
 </body>
 <script>
 var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
@@ -74,15 +55,6 @@ var mymap = L.map('mapid', {
         zoom: 7,
         layers: [satellite, standard]
     });
-/*L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: 'your.mapbox.access.token'
-    }).addTo(mymap);*/
-    /*'mapbox/satellite-v9'*/
 
     var baseMaps = {
     "Satellite": satellite,
@@ -165,7 +137,7 @@ var mymap = L.map('mapid', {
                 return d > 3 ? '#000' : //nero
                     d > 2 ? '#2f71ec' : //blu
                         d > 1.5 ? '#5af53b' : //verde
-                            d > -1.5 ? '#d9dadb' : //Grigio chiaro
+                            d > -1.5 ? '#d9dadb42' : //Grigio chiaro
                                 d > -2 ? '#eea724' ://arancione
                                     d > -3 ? '#e01f1f' : //rosso
                                         d > -4 ? '#6b0404' : //rosso scuro o marrone
@@ -175,8 +147,8 @@ var mymap = L.map('mapid', {
             function style(feature) {
                 return {
                     fillColor: getColor(feature.properties.spi),
-                    weight: 0,
-                    opacity: 0,
+                    weight: 1,
+                    opacity: 0.4,
                     color: 'white',
                     dashArray: '1',
                     fillOpacity: 1
