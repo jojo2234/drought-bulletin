@@ -9,6 +9,8 @@ $funForQry = analizza_GET("funzione");
  * Lo split viene effettuato in analizza_GET che si trova in funzioni.php così come la funzione esegui_query che effettua la connessione con il database*/
 switch($funForQry[0]){
 	case '1':
+		$sql = "SELECT DISTINCT mese FROM spi WHERE data='".$funForQry[1]."';";
+		$campi = array('mese' => 'intval');
 	break;
 	case '2':
 	//Ritorna ID poligoni delle celle e valori SPI delle cellem per la data e il mese (in realtà il numero indica i mesi da prendere su cui viene fatta l'analisi) indicato
@@ -17,7 +19,8 @@ switch($funForQry[0]){
 	break;
 	case '3':
 	//Riporta le date disponibili per i mesi selezionati
-	$sql = "SELECT DISTINCT data FROM spi WHERE mese=".$funForQry[1];//".$funForQry['mse'];
+	$sql = "SELECT DISTINCT data FROM spi ORDER BY data DESC";
+	//$sql = "SELECT DISTINCT data FROM spi WHERE mese=".$funForQry[1];//".$funForQry['mse'];
 	$campi = array('data' => 'utf8_encode');
 	break;
 	default: 

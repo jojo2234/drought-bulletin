@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/my.css" />
     <link rel="icon" href="img/favicon.png" />
     <script>
-        if (navigator.userAgent.search(".NET") >= 0) {
+        if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
             alert("Attenzione, il vostro browser potrebbe non essere supportato.")
         }
     </script>
@@ -43,7 +43,7 @@
 var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
-        id: 'mapbox/streets-v11',
+        id: 'mapbox/satellite-v9',
         tileSize: 512,
         zoomOffset: -1,
         layers: [satellite, standard],
@@ -101,8 +101,8 @@ var mymap = L.map('mapid', {
     };
 
     function riempiCampiData() {
-        var mesesel = document.getElementById("mesi").value;
-        $.getJSON("api/queries.php?funzione=3:"+mesesel, function (data) {
+        //var mesesel = document.getElementById("mesi").value;
+        $.getJSON("api/queries.php?funzione=3",function (data){//:"+mesesel, function (data) {
         var valoriDate = [];
          for (i = 0; i < data.length; i++) {
             valoriDate[i] = (data[i]["data"]);
@@ -113,6 +113,21 @@ var mymap = L.map('mapid', {
         }
     });
     }
+
+    function riempiCampiMesi(){
+        var mesesel = document.getElementById("data").value;
+        $.getJSON("api/queries.php?funzione=1:"+mesesel, function (data) {
+        var valoriSPI = [];
+         for (i = 0; i < data.length; i++) {
+            valoriSPI[i] = (data[i]["mese"]);
+        }
+        document.getElementById("mesi").innerHTML = '<option value="' + valoriSPI[0] + '">' + valoriSPI[0] + '</option>';
+        for (i = 1; i < (valoriSPI.length); i++) {
+            document.getElementById("mesi").innerHTML = document.getElementById("mesi").innerHTML + '<option value="' + valoriSPI[i] + '">' + valoriSPI[i] + '</option>';   
+        }
+    });
+    }
+
     function getMed(vet = new Array()){
         var latv = [];
         var lonv = [];
@@ -176,7 +191,7 @@ var mymap = L.map('mapid', {
     var legend = L.control({position: 'topleft'});
     legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'legenda');
-    div.innerHTML = '<div class="mainBar"><span>Data: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option><option value="2019-06-01">2019-06-01</option></select></span><span> Mese: <select><option value="1">1</option><option value="2">2</option></select></span></div>';
+    div.innerHTML = '<div class="mainBar"><span>Data: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Mese: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span></div>';
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
     };
@@ -197,6 +212,7 @@ var mymap = L.map('mapid', {
     document.getElementsByTagName('label')[1].append(imal);
     document.getElementsByTagName('label')[0].firstChild.style="display: inline;";
     document.getElementsByTagName('label')[1].firstChild.style="display: inline;";
+    riempiCampiData();
 /*
     var legend = L.control({position: 'topright'});
     legend.onAdd = function (map) {
