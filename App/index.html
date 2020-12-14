@@ -10,7 +10,7 @@
     <link rel="icon" href="img/favicon.png" />
     <script>
         if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
-            alert("Attenzione, il vostro browser potrebbe non essere supportato.")
+            alert("Warning, your browser could not be supported.")
         }
     </script>
     <script src="js/lib.js"></script>
@@ -185,6 +185,10 @@ var mymap = L.map('mapid', {
     document.getElementsByTagName('label')[0].firstChild.style="display: inline;";
     document.getElementsByTagName('label')[1].firstChild.style="display: inline;";
     riempiCampiData();
+    if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
+        document.getElementsByClassName('legenda leaflet-control')[0].style = "top:20px;left:16px;font-size:12px;";
+        document.getElementsByTagName("body")[0].insertBefore(document.getElementsByClassName('legenda leaflet-control')[0],document.getElementsByTagName("body")[0].firstChild);
+    }
 /*
     var legend = L.control({position: 'topright'});
     legend.onAdd = function (map) {
