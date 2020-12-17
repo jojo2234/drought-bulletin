@@ -65,7 +65,8 @@ var mymap = L.map('mapid', {
     "<span>Satellite</span>": satellite,
     "<span>Streets</span>": standard
     }; //Modify variable used in layer button
-
+    var noRefresh = 0;
+    var layerGEO;
     /**
      * Fill drop-down menu (combo box) with data value stored in database each time the page is refreshed
      **/
@@ -80,6 +81,7 @@ var mymap = L.map('mapid', {
         for (i = 1; i < (valoriDate.length); i++) {
             document.getElementById("data").innerHTML = document.getElementById("data").innerHTML + '<option value="' + valoriDate[i] + '">' + valoriDate[i] + '</option>';   
         }
+        riempiCampiMesi();
     });
     }
 
@@ -97,7 +99,8 @@ var mymap = L.map('mapid', {
         for (i = 1; i < (valoriSPI.length); i++) {
             document.getElementById("mesi").innerHTML = document.getElementById("mesi").innerHTML + '<option value="' + valoriSPI[i] + '">' + valoriSPI[i] + '</option>';   
         }
-    });
+        mostraSPI();
+        });
     }
 
     function getMed(vet = new Array()){ //Questo valore va nel db non calcolarlo qui
@@ -162,9 +165,13 @@ var mymap = L.map('mapid', {
             }
             var tmpJSON = JSON.parse(geojsonFeature);
             geojsonFeature = '{"type":"FeatureCollection", "features":['; //Solved issue, after data were showed the variable was fill of unused GeoJSON string and that was preventing to show the new data.
-            //Now, previous layer must be removed or showed only on request.
+            //Previous layer is removed if the page hasn't been refreshed.
             //L.geoJSON(tmpJSON).addTo(mymap);//This show the blue grid!!!!!
-            L.geoJson(tmpJSON, { style: style }).addTo(mymap); //This show only the colored grid sections
+            if(noRefresh){
+                mymap.removeLayer(layerGEO);
+            }
+            layerGEO = L.geoJson(tmpJSON, { style: style }).addTo(mymap); //This show only the colored grid sections
+            noRefresh = 1;
         });
     }
 
@@ -193,6 +200,7 @@ var mymap = L.map('mapid', {
     document.getElementsByTagName('label')[0].firstChild.style="display: inline;"; //Changing css of those labels
     document.getElementsByTagName('label')[1].firstChild.style="display: inline;";
     riempiCampiData();//When everything is done the function to fill the data drop-down menu is called
+    
     //If the used browser is Internet Explorer (not supported) or Microsoft Edge (old version supported)
     //This if move the mainbar at the top of body in this way it works
     if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
