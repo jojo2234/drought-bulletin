@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8" /><!-- Viewport fullscreen, compatibile with mobile phone (maybe)-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="author" content="Alessandro Mazzeo" />
-    <title>Drought Bulletin</title>
+    <title>Drought Bulletin</title><!--CSS leaflet has been modded by me-->
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <link rel="stylesheet" href="css/my.css" />
-    <link rel="icon" href="img/favicon.png" />
+    <link rel="icon" href="img/favicon.png" /><!--Title bar icon should be changed-->
     <script>
+        /**
+         *If the browser is Internet Explorer or Microsoft Edge a compatibility warning appear 
+         **/
         if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
             alert("Warning, your browser could not be supported.")
         }
     </script>
-    <script src="js/lib.js"></script>
-    <script src="leaflet/leaflet.js"></script>
-    <script src="js/jquery.min.js"></script>
+    <!--<script src="js/lib.js"></script>--><!--Used to convert latitude and longitude in UTM, not more used!-->
+    <script src="leaflet/leaflet.js"></script><!--Leaflet make the map-->
+    <script src="js/jquery.min.js"></script><!--JQuery liberary min used to get data via JSON-->
 </head>
 <body>
-    <div id='mapid'></div>
+    <div id='mapid'></div> <!--The map is inserte here!-->
 </body>
+<!-- All main javascript is inserted in the html page due to performance results-->
 <script>
 var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -29,16 +33,7 @@ var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}
         zoomOffset: -1,
         layers: [satellite, standard],
         accessToken: 'your.mapbox.access.token'
-    })
-var streets   = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1,
-        layers: [satellite, standard],
-        accessToken: 'your.mapbox.access.token'
-    })
+    }) //Save the map layer satellite tiles from mapbox website
 
 var standard = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -47,31 +42,33 @@ var standard = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
         tileSize: 512,
         zoomOffset: -1,
         accessToken: 'your.mapbox.access.token'
-    });
+    });//Save the map layer street tiles from mapbox website
 
-//var mymap = L.map('mapid').setView([42.60744445999161, 11.7342599416889], 7);
 var mymap = L.map('mapid', {
         center: [42.60744445999161, 11.7342599416889],
         zoom: 7,
-        layers: [satellite, standard]
-    });
+        layers: [standard, satellite]
+    }); //Load layers
 
     var baseMaps = {
     "Satellite": satellite,
     "Streets": standard
-    };
+    };//Used for layer button
 
     var overlayMaps = {
         "Standard": standard
-    };
+    };//Used for layer button
 
-    L.control.layers(baseMaps, overlayMaps).addTo(mymap);
+    L.control.layers(baseMaps, overlayMaps).addTo(mymap); //Add layer button to the map
 
     var baseMaps = {
     "<span>Satellite</span>": satellite,
     "<span>Streets</span>": standard
-    };
+    }; //Modify variable used in layer button
 
+    /**
+     * Fill drop-down menu (combo box) with data value stored in database each time the page is refreshed
+     **/
     function riempiCampiData() {
         //var mesesel = document.getElementById("mesi").value;
         $.getJSON("api/queries.php?funzione=3",function (data){//:"+mesesel, function (data) {
@@ -86,6 +83,9 @@ var mymap = L.map('mapid', {
     });
     }
 
+    /**
+     * Fill drop-down menu (combo box) SPI index every time data change
+     **/
     function riempiCampiMesi(){
         var mesesel = document.getElementById("data").value;
         $.getJSON("api/queries.php?funzione=1:"+mesesel, function (data) {
@@ -100,7 +100,7 @@ var mymap = L.map('mapid', {
     });
     }
 
-    function getMed(vet = new Array()){
+    function getMed(vet = new Array()){ //Questo valore va nel db non calcolarlo qui
         var latv = [];
         var lonv = [];
         for(var i=0;i<vet[0].length;i++){
@@ -117,7 +117,11 @@ var mymap = L.map('mapid', {
         return centroXY;
     }
     
-    var geojsonFeature = '{"type":"FeatureCollection", "features":[';
+    var geojsonFeature = '{"type":"FeatureCollection", "features":['; //Used to store the GeoJSON string
+    /**
+     * Function mostraSPI() called when months SPI is selected
+     * This function retrive SPI values and fit it in a GeoJSON format
+     **/
     function mostraSPI() {
         var mesesel = document.getElementById("mesi").value;
         var datael = document.getElementById("data").value;
@@ -125,12 +129,12 @@ var mymap = L.map('mapid', {
             var centroidXY = [0,0];
             centroidXY = getMed(JSON.parse(data[0]["Poligono"]));//Se nel database il poligono non è rinchiuso tra virgolette
             var utmCoords = [0,0];
-            MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(centroidXY[1]), utmCoords);
-            geojsonFeature += '{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[0]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[0]["ID"])+',"spi":'+JSON.parse(data[0]["SPI"])+',"utmx":'+(utmCoords[0])+',"utmy":'+(utmCoords[1])+',"latCentroid":'+centroidXY[1]+',"lngCentroid":'+centroidXY[0]+'}}';
+            //MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(centroidXY[1]), utmCoords);
+            geojsonFeature += '{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[0]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[0]["ID"])+',"spi":'+JSON.parse(data[0]["SPI"])+',"latCentroid":'+centroidXY[1]+',"lngCentroid":'+centroidXY[0]+'}}';
             for (i = 1; i < data.length; i++) {
                 centroidXY = getMed(JSON.parse(data[i]["Poligono"]));
-                MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(centroidXY[1]), utmCoords);
-                geojsonFeature += ',{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[i]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[i]["ID"])+',"spi":'+JSON.parse(data[i]["SPI"])+',"utmx":'+(utmCoords[0])+',"utmy":'+(utmCoords[1])+',"latCentroid":'+centroidXY[1]+',"lngCentroid":'+centroidXY[0]+'}}';
+                //MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(centroidXY[1]), utmCoords);
+                geojsonFeature += ',{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[i]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[i]["ID"])+',"spi":'+JSON.parse(data[i]["SPI"])+',"latCentroid":'+centroidXY[1]+',"lngCentroid":'+centroidXY[0]+'}}';
             }
             geojsonFeature += ']}';
             function getColor(d) {
@@ -143,71 +147,58 @@ var mymap = L.map('mapid', {
                                         d > -4 ? '#6b0404' : //rosso scuro o marrone
                                             '#da22ac';
             }
-
+            /**
+             *With this function colors are shown.
+             **/
             function style(feature) {
                 return {
                     fillColor: getColor(feature.properties.spi),
                     weight: 1,
                     opacity: 0.4,
-                    color: 'white',
+                    color: getColor(feature.properties.spi),
                     dashArray: '1',
                     fillOpacity: 1
                 };
             }
             var tmpJSON = JSON.parse(geojsonFeature);
-            L.geoJSON(tmpJSON).addTo(mymap);
-            L.geoJson(tmpJSON, { style: style }).addTo(mymap);
+            geojsonFeature = '{"type":"FeatureCollection", "features":['; //Solved issue, after data were showed the variable was fill of unused GeoJSON string and that was preventing to show the new data.
+            //Now, previous layer must be removed or showed only on request.
+            //L.geoJSON(tmpJSON).addTo(mymap);//This show the blue grid!!!!!
+            L.geoJson(tmpJSON, { style: style }).addTo(mymap); //This show only the colored grid sections
         });
     }
 
-    var legend = L.control({position: 'topleft'});
+    var legend = L.control({position: 'topleft'});//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'legenda');
     div.innerHTML = '<div class="mainBar"><span>Data: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Mese: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span></div>';
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
-    };
-    legend.addTo(mymap);
+    }; //This add the div section that contains the drop down menu called mainBar
+    legend.addTo(mymap); //Adding the mainBar to the map
 
-    document.getElementsByClassName('legenda leaflet-control')[0].style = "top:20px;left:16px;";
-    document.getElementsByClassName('leaflet-control-container')[0].append(document.getElementsByClassName('legenda leaflet-control')[0]);
+    document.getElementsByClassName('legenda leaflet-control')[0].style = "top:20px;left:16px;";//Changing the position of the main bar
+    document.getElementsByClassName('leaflet-control-container')[0].append(document.getElementsByClassName('legenda leaflet-control')[0]); //Changing the position in the document tree
     //document.getElementsByClassName('legenda leaflet-control')[0].style = "top:0px;left:0px;visibility:hidden;display:none;";
-    var imel = document.createElement("img");
+    var imel = document.createElement("img"); //Adding an icon for layer satellite
     imel.setAttribute("src", "img/s.png");
     imel.setAttribute("width", "14");
     imel.setAttribute("style","padding-left: 5px;vertical-align: middle;");
-    var imal = document.createElement("img");
+    var imal = document.createElement("img"); //Adding an icon for layer streets
     imal.setAttribute("src", "img/l.png");
     imal.setAttribute("width", "14");
     imal.setAttribute("style","padding-left: 10px;vertical-align: middle;");
-    document.getElementsByTagName('label')[0].append(imel);
+    document.getElementsByTagName('label')[0].append(imel); //Appending the image to the label (street, satellite)
     document.getElementsByTagName('label')[1].append(imal);
-    document.getElementsByTagName('label')[0].firstChild.style="display: inline;";
+    document.getElementsByTagName('label')[0].firstChild.style="display: inline;"; //Changing css of those labels
     document.getElementsByTagName('label')[1].firstChild.style="display: inline;";
-    riempiCampiData();
+    riempiCampiData();//When everything is done the function to fill the data drop-down menu is called
+    //If the used browser is Internet Explorer (not supported) or Microsoft Edge (old version supported)
+    //This if move the mainbar at the top of body in this way it works
     if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
         document.getElementsByClassName('legenda leaflet-control')[0].style = "top:20px;left:16px;font-size:12px;";
         document.getElementsByTagName("body")[0].insertBefore(document.getElementsByClassName('legenda leaflet-control')[0],document.getElementsByTagName("body")[0].firstChild);
     }
-/*
-    var legend = L.control({position: 'topright'});
-    legend.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'info legend');
-    div.innerHTML = '<select id="mesi" onchange="riempiCampiData()"><option value="1">1</option><option value="3">3</option><option value="6">6</option><option value="9">9</option><option value="12">12</option><option value="24">24</option></select>';
-    div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
-    return div;
-    };
-    legend.addTo(mymap);*/
-    
-/*
-    L.geoJSON(appJSONcen, {
-        style: function (feature) {
-            return {color: feature.properties.color};
-        }
-    }).bindPopup(function (layer) {
-        return layer.feature.properties.description;
-    }).addTo(map);*/
-
 </script>
 
 </html>
