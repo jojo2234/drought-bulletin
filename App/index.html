@@ -129,15 +129,16 @@ var mymap = L.map('mapid', {
         var mesesel = document.getElementById("mesi").value;
         var datael = document.getElementById("data").value;
         $.getJSON("api/queries.php?funzione=2:"+mesesel+":"+datael, function (data) {
-            var centroidXY = [0,0];
-            centroidXY = getMed(JSON.parse(data[0]["Poligono"]));//Se nel database il poligono non è rinchiuso tra virgolette
-            var utmCoords = [0,0];
+            //var centroidXY = [0,0];
+            //centroidXY = getMed(JSON.parse(data[0]["Poligono"]));//Se nel database il poligono non è rinchiuso tra virgolette
+            //alert("ECCO: "+JSON.parse(data[0]["Centroide"])[1] + " - " + centroidXY[0]+" | "+JSON.parse(data[0]["Centroide"])[0] + " - " + centroidXY[1]);
+            //var utmCoords = [0,0];
             //MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(centroidXY[1]), utmCoords);
-            geojsonFeature += '{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[0]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[0]["ID"])+',"spi":'+JSON.parse(data[0]["SPI"])+',"latCentroid":'+centroidXY[1]+',"lngCentroid":'+centroidXY[0]+'}}';
+            geojsonFeature += '{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[0]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[0]["ID"])+',"spi":'+JSON.parse(data[0]["SPI"])+',"latCentroid":'+JSON.parse(data[0]["Centroide"])[0]+',"lngCentroid":'+JSON.parse(data[0]["Centroide"])[1]+'}}';
             for (i = 1; i < data.length; i++) {
-                centroidXY = getMed(JSON.parse(data[i]["Poligono"]));
+                //centroidXY = getMed(JSON.parse(data[i]["Poligono"]));
                 //MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(centroidXY[1]), utmCoords);
-                geojsonFeature += ',{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[i]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[i]["ID"])+',"spi":'+JSON.parse(data[i]["SPI"])+',"latCentroid":'+centroidXY[1]+',"lngCentroid":'+centroidXY[0]+'}}';
+                geojsonFeature += ',{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[i]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[i]["ID"])+',"spi":'+JSON.parse(data[i]["SPI"])+',"latCentroid":'+JSON.parse(data[i]["Centroide"])[0]+',"lngCentroid":'+JSON.parse(data[i]["Centroide"])[1]+'}}';
             }
             geojsonFeature += ']}';
             function getColor(d) {
@@ -163,6 +164,7 @@ var mymap = L.map('mapid', {
                     fillOpacity: 1
                 };
             }
+            //document.getElementsByTagName('body')[0].innerHTML = geojsonFeature;
             var tmpJSON = JSON.parse(geojsonFeature);
             geojsonFeature = '{"type":"FeatureCollection", "features":['; //Solved issue, after data were showed the variable was fill of unused GeoJSON string and that was preventing to show the new data.
             //Previous layer is removed if the page hasn't been refreshed.

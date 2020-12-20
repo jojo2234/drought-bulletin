@@ -10,6 +10,9 @@ Andare in C:\xampp\mysql\bin\
 Avviare mysql -h localhost -u root -p (o senza -p se non c'è passoword)
 Dare use cellespi;
 Dare show tables; giusto per sicurezza
-LOAD DATA INFILE 'C:\Users\Alex\Documents\drought-bulletin-main\data\celle_forDB.csv' INTO TABLE celle FIELDS TERMINATED BY ',' ENCLOSED BY "" LINES TERMINATED BY '\n';
-LOAD DATA INFILE 'celle_forDB.csv' INTO TABLE celle FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';
+Per svuotare le tabelle dei dati precedenti si usa
+ DELETE FROM nomeTabella
+Prima si cancellano sempre quelle che hanno i riferimenti a chiavi esterne.
+LOAD DATA INFILE 'C:\Users\Alex\Documents\GitHub\drought-bulletin\Data\celleForDB_Centroid.csv' INTO TABLE celle FIELDS TERMINATED BY ',' ENCLOSED BY "" LINES TERMINATED BY '\n';
+LOAD DATA INFILE 'celleForDB_Centroid.csv' INTO TABLE celle FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';
 LOAD DATA INFILE 'spi_forDB.csv' INTO TABLE spi FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';

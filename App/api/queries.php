@@ -14,8 +14,8 @@ switch($funForQry[0]){
 	break;
 	case '2':
 	//Ritorna ID poligoni delle celle e valori SPI delle cellem per la data e il mese (in realtà il numero indica i mesi da prendere su cui viene fatta l'analisi) indicato
-	$sql = "SELECT celle.Id AS ID, Poligono, SPI FROM celle JOIN spi ON ID_Cella = celle.Id WHERE Mese=".$funForQry[1]." AND Data='".$funForQry[2]."';";
-	$campi = array('ID' => 'intval','Poligono'=>'utf8_encode','SPI'=>'floatval');
+	$sql = "SELECT celle.Id AS ID, Poligono, Centroide, SPI FROM celle JOIN spi ON ID_Cella = celle.Id WHERE Mese=".$funForQry[1]." AND Data='".$funForQry[2]."';";
+	$campi = array('ID' => 'intval','Poligono'=>'utf8_encode','Centroide'=>'utf8_encode','SPI'=>'floatval');
 	break;
 	case '3':
 	//Riporta le date disponibili per i mesi selezionati
