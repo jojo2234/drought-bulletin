@@ -73,7 +73,7 @@
 	-webkit-tap-highlight-color: transparent;
 }
 .leaflet-container a {
-	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+	-webkit-tap-highlight-color: rgba(52, 181, 229, 0.4);
 }
 .leaflet-tile {
 	filter: inherit;
@@ -266,7 +266,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	}
 .leaflet-zoom-box {
 	border: 2px dotted #38f;
-	background: rgba(255,255,255,0.5);
+	background: hsla(0, 0%, 100%, 0.5);
 	}
 
 

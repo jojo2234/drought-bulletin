@@ -67,6 +67,7 @@ var mymap = L.map('mapid', {
     }; //Modify variable used in layer button
     var noRefresh = 0;
     var layerGEO;
+    var celleGeo;
     /**
      * Fill drop-down menu (combo box) with data value stored in database each time the page is refreshed
      **/
@@ -119,8 +120,20 @@ var mymap = L.map('mapid', {
         }
         return centroXY;
     }
-    
+
+    var tmpJSON;
     var geojsonFeature = '{"type":"FeatureCollection", "features":['; //Used to store the GeoJSON string
+
+    function draRemCelle(){
+        if(document.getElementById("celid").checked == true){
+            mymap.removeLayer(layerGEO);
+            celleGeo = L.geoJSON(tmpJSON).addTo(mymap);
+            layerGEO.addTo(mymap);
+        }else{
+            mymap.removeLayer(celleGeo);
+        }
+    }
+
     /**
      * Function mostraSPI() called when months SPI is selected
      * This function retrive SPI values and fit it in a GeoJSON format
@@ -165,10 +178,10 @@ var mymap = L.map('mapid', {
                 };
             }
             //document.getElementsByTagName('body')[0].innerHTML = geojsonFeature;
-            var tmpJSON = JSON.parse(geojsonFeature);
+            tmpJSON = JSON.parse(geojsonFeature);
             geojsonFeature = '{"type":"FeatureCollection", "features":['; //Solved issue, after data were showed the variable was fill of unused GeoJSON string and that was preventing to show the new data.
             //Previous layer is removed if the page hasn't been refreshed.
-            //L.geoJSON(tmpJSON).addTo(mymap);//This show the blue grid!!!!!
+            //celleGeo = L.geoJSON(tmpJSON).addTo(mymap);//This show the blue grid!!!!!
             if(noRefresh){
                 mymap.removeLayer(layerGEO);
             }
@@ -179,13 +192,12 @@ var mymap = L.map('mapid', {
 
     var legend = L.control({position: 'topleft'});//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'legenda');
-    div.innerHTML = '<div class="mainBar"><span>Data: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Mese: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span></div>';
-    div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
-    return div;
+        var div = L.DomUtil.create('div', 'legenda');
+        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img src="img/pl.png"/></div>';
+        div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
+        return div;
     }; //This add the div section that contains the drop down menu called mainBar
     legend.addTo(mymap); //Adding the mainBar to the map
-
     document.getElementsByClassName('legenda leaflet-control')[0].style = "top:20px;left:16px;";//Changing the position of the main bar
     document.getElementsByClassName('leaflet-control-container')[0].append(document.getElementsByClassName('legenda leaflet-control')[0]); //Changing the position in the document tree
     //document.getElementsByClassName('legenda leaflet-control')[0].style = "top:0px;left:0px;visibility:hidden;display:none;";
@@ -202,7 +214,7 @@ var mymap = L.map('mapid', {
     document.getElementsByTagName('label')[0].firstChild.style="display: inline;"; //Changing css of those labels
     document.getElementsByTagName('label')[1].firstChild.style="display: inline;";
     riempiCampiData();//When everything is done the function to fill the data drop-down menu is called
-    
+    document.getElementsByClassName('leaflet-control-container')[0].append(document.getElementById("colleg"));
     //If the used browser is Internet Explorer (not supported) or Microsoft Edge (old version supported)
     //This if move the mainbar at the top of body in this way it works
     if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
