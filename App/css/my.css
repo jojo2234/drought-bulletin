@@ -7,5 +7,5 @@ h1{text-align:center;}
 .mainBar span{padding: 2px; margin: 2px; font-weight: bold; font-family: Verdana, Geneva, Tahoma, sans-serif;}
 .mainBar span *{margin-top: 12px;}
 #colleg{position: fixed;bottom: 18px;left: 18px;}
-#colleg img{width:320px;opacity:30%;}
-#colleg img:hover{opacity:90%;}
+#colleg img{width:35%;opacity:50%;}
+#colleg img:hover{opacity:100%;}

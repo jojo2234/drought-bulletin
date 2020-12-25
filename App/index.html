@@ -86,6 +86,13 @@ var mymap = L.map('mapid', {
     });
     }
 
+    function onEachFeature(feature, layer) {
+        // does this feature have a property named popupContent?
+        if (feature.properties && feature.properties.spi) {
+            layer.bindPopup("SPI=" + feature.properties.spi);
+        }
+    }
+
     /**
      * Fill drop-down menu (combo box) SPI index every time data change
      **/
@@ -179,13 +186,15 @@ var mymap = L.map('mapid', {
             }
             //document.getElementsByTagName('body')[0].innerHTML = geojsonFeature;
             tmpJSON = JSON.parse(geojsonFeature);
+            
             geojsonFeature = '{"type":"FeatureCollection", "features":['; //Solved issue, after data were showed the variable was fill of unused GeoJSON string and that was preventing to show the new data.
             //Previous layer is removed if the page hasn't been refreshed.
             //celleGeo = L.geoJSON(tmpJSON).addTo(mymap);//This show the blue grid!!!!!
             if(noRefresh){
                 mymap.removeLayer(layerGEO);
             }
-            layerGEO = L.geoJson(tmpJSON, { style: style }).addTo(mymap); //This show only the colored grid sections
+            layerGEO = L.geoJson(tmpJSON, {style: style,onEachFeature: onEachFeature}).addTo(mymap); //This show only the colored grid sections
+            //L.geoJSON(tmpJSON, {onEachFeature: onEachFeature}).addTo(mymap); //Adding on click show SPI value
             noRefresh = 1;
         });
     }
