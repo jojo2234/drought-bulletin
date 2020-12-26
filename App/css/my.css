@@ -7,4 +7,7 @@ h1{text-align:center;}
 .mainBar span{padding: 2px; margin: 2px; font-weight: bold; font-family: Verdana, Geneva, Tahoma, sans-serif;}
 .mainBar span *{margin-top: 12px;}
 #colleg{position: fixed;bottom: 18px;left: 18px;}
+#colleg img:hover{opacity: 100%;}
 #colleg img{width:35%;opacity:70%;}
+.slider {-webkit-appearance: none;appearance: none;height: 12px;background: #d3d3d3; outline: none;opacity: 0.4;-webkit-transition: .2s;transition: opacity .2s;}.slider:hover {opacity: 1;}.slider::-webkit-slider-thumb {-webkit-appearance: none;appearance: none;width: 15px; height: 15px;background: #4caf89;cursor: pointer;}.slider::-moz-range-thumb {width: 15px;height: 15px;background: #4caf89;cursor: pointer;}
+#opaDiv{float:right;margin-top:15px;font-weight: bold;}

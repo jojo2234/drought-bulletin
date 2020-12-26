@@ -69,6 +69,7 @@ var mymap = L.map('mapid', {
     var layerGEO;
     var celleGeo;
     var SPIcol=['#000','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#6b0404','#da22ac'];
+    var opacLay = 0.4;
     /**
      * Fill drop-down menu (combo box) with data value stored in database each time the page is refreshed
      **/
@@ -86,9 +87,8 @@ var mymap = L.map('mapid', {
         riempiCampiMesi();
     });
     }
-
+    //Set the Pop up SPI value on click
     function onEachFeature(feature, layer) {
-        // does this feature have a property named popupContent?
         if (feature.properties && feature.properties.spi) {
             layer.bindPopup("SPI=" + feature.properties.spi);
         }
@@ -127,6 +127,13 @@ var mymap = L.map('mapid', {
             centroXY[1] = 0;
         }
         return centroXY;
+    }
+
+    //chOpac change opacity of grid layers
+    function chOpac(){
+        opacLay = (document.getElementById("opac").value/100);
+        mostraSPI();
+        document.getElementById("valOpac").innerHTML = opacLay;
     }
 
     var tmpJSON;
@@ -211,10 +218,10 @@ var mymap = L.map('mapid', {
                 return {
                     fillColor: getColor(feature.properties.spi),
                     weight: 1,
-                    opacity: 0.4,
+                    opacity: opacLay,
                     color: getColor(feature.properties.spi),
                     dashArray: '1',
-                    fillOpacity: 1
+                    fillOpacity: opacLay
                 };
             }
             //document.getElementsByTagName('body')[0].innerHTML = geojsonFeature;
@@ -235,7 +242,7 @@ var mymap = L.map('mapid', {
     var legend = L.control({position: 'topleft'});//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legenda');
-        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI colors: <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RdBu</option><option value="img/d.png">RdYlBu</option><option value="img/c.png">RdYlGn</option><option value="img/b.png">Theresold5</option><option value="img/a.png" selected="">Theresold7</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img id="colgimg" src="img/a.png"/></div>';
+        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI colors: <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RdBu</option><option value="img/d.png">RdYlBu</option><option value="img/c.png">RdYlGn</option><option value="img/b.png">Theresold5</option><option value="img/a.png" selected="">Theresold7</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img id="colgimg" src="img/a.png"/><div id="opaDiv"><span> Opacity layers: </span><input type="range" min="0" max="100" value="40" class="slider" id="opac" onchange="chOpac()"/><span id="valOpac">0.4</span></div></div>';
         div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
         return div;
     }; //This add the div section that contains the drop down menu called mainBar
