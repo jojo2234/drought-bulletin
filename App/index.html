@@ -68,6 +68,7 @@ var mymap = L.map('mapid', {
     var noRefresh = 0;
     var layerGEO;
     var celleGeo;
+    var SPIcol=['#000','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#6b0404','#da22ac'];
     /**
      * Fill drop-down menu (combo box) with data value stored in database each time the page is refreshed
      **/
@@ -131,6 +132,9 @@ var mymap = L.map('mapid', {
     var tmpJSON;
     var geojsonFeature = '{"type":"FeatureCollection", "features":['; //Used to store the GeoJSON string
 
+    /**
+     * Function draRemCelle() show the grid with all cells 
+     **/
     function draRemCelle(){
         if(document.getElementById("celid").checked == true){
             mymap.removeLayer(layerGEO);
@@ -139,6 +143,35 @@ var mymap = L.map('mapid', {
         }else{
             mymap.removeLayer(celleGeo);
         }
+    }
+
+    /**
+     * Function chCol change the SPI color palette 
+     **/
+    function chCol(){
+        var valpath = document.getElementById("spicols").value;
+        document.getElementById("colgimg").src = valpath;
+        switch(valpath){
+            case "img/f.png":
+                SPIcol=['#154d89','#6aabd0','#cee4ee','#f4eeeb79','#facab2','#e88b6f','#971228','#da22ac'];
+            break;
+            case "img/e.png":
+                SPIcol=['#4287b4','#98d5a4','#dbf19f','#fcf9b183','#fdf2a8','#fa9b59','#b11746','#da22ac'];
+            break;
+            case "img/d.png":
+                SPIcol=['#3c57a5','#7db3d4','#cce9ef','#faf9c079','#fee59b','#f99657','#af0926','#da22ac'];
+            break;
+            case "img/c.png":
+                SPIcol=['#477e5b','#63bb61','#cae983','#faf6ad3b','#fee698','#7e5e4a','#ac0726','#da22ac'];
+            break;
+            case "img/b.png":
+                SPIcol=['#ffffff00','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#ffffff00','#da22ac'];
+            break;
+            case "img/a.png":
+                SPIcol=['#000','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#6b0404','#da22ac'];
+            break;
+        }
+        mostraSPI();
     }
 
     /**
@@ -162,14 +195,14 @@ var mymap = L.map('mapid', {
             }
             geojsonFeature += ']}';
             function getColor(d) {
-                return d > 3 ? '#000' : //nero
-                    d > 2 ? '#2f71ec' : //blu
-                        d > 1.5 ? '#5af53b' : //verde
-                            d > -1.5 ? '#d9dadb42' : //Grigio chiaro
-                                d > -2 ? '#eea724' ://arancione
-                                    d > -3 ? '#e01f1f' : //rosso
-                                        d > -4 ? '#6b0404' : //rosso scuro o marrone
-                                            '#da22ac';
+                return d > 3 ? SPIcol[0] : //nero
+                    d > 2 ? SPIcol[1] : //blu
+                        d > 1.5 ? SPIcol[2] : //verde
+                            d > -1.5 ? SPIcol[3] : //Grigio chiaro
+                                d > -2 ? SPIcol[4] ://arancione
+                                    d > -3 ? SPIcol[5] : //rosso
+                                        d > -4 ? SPIcol[6] : //rosso scuro o marrone
+                                            SPIcol[7];//Anomalo
             }
             /**
              *With this function colors are shown.
@@ -202,7 +235,7 @@ var mymap = L.map('mapid', {
     var legend = L.control({position: 'topleft'});//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legenda');
-        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img src="img/pl.png"/></div>';
+        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI colors: <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RdBu</option><option value="img/d.png">RdYlBu</option><option value="img/c.png">RdYlGn</option><option value="img/b.png">Theresold5</option><option value="img/a.png" selected="">Theresold7</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img id="colgimg" src="img/a.png"/></div>';
         div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
         return div;
     }; //This add the div section that contains the drop down menu called mainBar
@@ -229,6 +262,9 @@ var mymap = L.map('mapid', {
     if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
         document.getElementsByClassName('legenda leaflet-control')[0].style = "top:20px;left:16px;font-size:12px;";
         document.getElementsByTagName("body")[0].insertBefore(document.getElementsByClassName('legenda leaflet-control')[0],document.getElementsByTagName("body")[0].firstChild);
+    }
+    if(window.innerWidth < 720){
+        alert("Screen resolution could not be supported!");
     }
 </script>
 
