@@ -25,29 +25,32 @@
 </body>
 <!-- All main javascript is inserted in the html page due to performance results-->
 <script>
+    //'tiles/st/{z}/{x}/{y}.jpg'
+    //'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g'
 var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from MOBAC',
+        maxZoom: 7,
         id: 'mapbox/satellite-v9',
-        tileSize: 512,
-        zoomOffset: -1,
+        tileSize: 256,
+        /*zoomOffset: -1,*/
         layers: [satellite, standard],
         accessToken: 'your.mapbox.access.token'
     }) //Save the map layer satellite tiles from mapbox website
-
+    //'tiles/sr/{z}/{x}/{y}.png'
+//Old maps payment now are offline 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g'
 var standard = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from MOBAC',
+        maxZoom: 13,
         id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1,
+        tileSize: 256,
+        /*zoomOffset: -1,*/
         accessToken: 'your.mapbox.access.token'
     });//Save the map layer street tiles from mapbox website
 
 var mymap = L.map('mapid', {
         center: [42.60744445999161, 11.7342599416889],
         zoom: 7,
-        layers: [standard, satellite]
+        layers: [satellite, standard]
     }); //Load layers
 
     var baseMaps = {
@@ -90,7 +93,7 @@ var mymap = L.map('mapid', {
     //Set the Pop up SPI value on click
     function onEachFeature(feature, layer) {
         if (feature.properties && feature.properties.spi) {
-            layer.bindPopup("SPI=" + feature.properties.spi);
+            layer.bindPopup("SPI=" + feature.properties.spi.toFixed(2));
         }
     }
 
@@ -98,8 +101,8 @@ var mymap = L.map('mapid', {
      * Fill drop-down menu (combo box) SPI index every time data change
      **/
     function riempiCampiMesi(){
-        var mesesel = document.getElementById("data").value;
-        $.getJSON("api/queries.php?funzione=1:"+mesesel, function (data) {
+        var datael = document.getElementById("data").value;
+        $.getJSON("api/queries.php?funzione=1&data="+datael, function (data) {
         var valoriSPI = [];
          for (i = 0; i < data.length; i++) {
             valoriSPI[i] = (data[i]["mese"]);
@@ -188,10 +191,9 @@ var mymap = L.map('mapid', {
     function mostraSPI() {
         var mesesel = document.getElementById("mesi").value;
         var datael = document.getElementById("data").value;
-        $.getJSON("api/queries.php?funzione=2:"+mesesel+":"+datael, function (data) {
+        $.getJSON("api/queries.php?funzione=2&mese="+mesesel+"&data="+datael, function (data) {
             //var centroidXY = [0,0];
             //centroidXY = getMed(JSON.parse(data[0]["Poligono"]));//Se nel database il poligono non è rinchiuso tra virgolette
-            //alert("ECCO: "+JSON.parse(data[0]["Centroide"])[1] + " - " + centroidXY[0]+" | "+JSON.parse(data[0]["Centroide"])[0] + " - " + centroidXY[1]);
             //var utmCoords = [0,0];
             //MapLatLonToXY(DegToRad(centroidXY[1]), DegToRad(centroidXY[0]), DegToRad(centroidXY[1]), utmCoords);
             geojsonFeature += '{"type":"Feature","geometry":{"type":"Polygon","coordinates":'+(data[0]["Poligono"])+'},"properties":{"idCella":'+JSON.parse(data[0]["ID"])+',"spi":'+JSON.parse(data[0]["SPI"])+',"latCentroid":'+JSON.parse(data[0]["Centroide"])[0]+',"lngCentroid":'+JSON.parse(data[0]["Centroide"])[1]+'}}';
@@ -239,14 +241,24 @@ var mymap = L.map('mapid', {
         });
     }
 
+    function disableDrag(){
+        mymap.dragging.disable();
+    }
+
+    function enableDrag(){
+        mymap.dragging.enable();
+    }
+
     var legend = L.control({position: 'topleft'});//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legenda');
-        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI colors: <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RdBu</option><option value="img/d.png">RdYlBu</option><option value="img/c.png">RdYlGn</option><option value="img/b.png">Theresold5</option><option value="img/a.png" selected="">Theresold7</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img id="colgimg" src="img/a.png"/><div id="opaDiv"><span> Opacity layers: </span><input type="range" min="0" max="100" value="40" class="slider" id="opac" onchange="chOpac()"/><span id="valOpac">0.4</span></div></div>';
+        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI colors: <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RdBu</option><option value="img/d.png">RdYlBu</option><option value="img/c.png">RdYlGn</option><option value="img/b.png">Theresold5</option><option value="img/a.png" selected="">Theresold7</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img id="colgimg" onmouseover="disableDrag()" onmouseout="enableDrag()" src="img/a.png"/><div id="opaDiv"><span>Opacity:</span><input type="range" min="0" max="100" value="40" class="slider" id="opac" onmouseover="disableDrag()" onmouseout="enableDrag()" onchange="chOpac()"/><span id="valOpac">0.4</span></div></div>';
         div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
         return div;
     }; //This add the div section that contains the drop down menu called mainBar
     legend.addTo(mymap); //Adding the mainBar to the map
+    legend.getContainer().addEventListener('mouseover',disableDrag);
+    legend.getContainer().addEventListener('mouseout',enableDrag);
     document.getElementsByClassName('legenda leaflet-control')[0].style = "top:20px;left:16px;";//Changing the position of the main bar
     document.getElementsByClassName('leaflet-control-container')[0].append(document.getElementsByClassName('legenda leaflet-control')[0]); //Changing the position in the document tree
     //document.getElementsByClassName('legenda leaflet-control')[0].style = "top:0px;left:0px;visibility:hidden;display:none;";
