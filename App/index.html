@@ -72,7 +72,7 @@ var mymap = L.map('mapid', {
     var layerGEO;
     var celleGeo;
     var SPIcol=['#000','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#6b0404','#da22ac'];
-    var opacLay = 0.4;
+    var opacLay = 0.7;
     /**
      * Fill drop-down menu (combo box) with data value stored in database each time the page is refreshed
      **/
@@ -162,22 +162,22 @@ var mymap = L.map('mapid', {
         var valpath = document.getElementById("spicols").value;
         document.getElementById("colgimg").src = valpath;
         switch(valpath){
-            case "img/f.png":
+            case "img/f.png": //Spectral
                 SPIcol=['#154d89','#6aabd0','#cee4ee','#f4eeeb79','#facab2','#e88b6f','#971228','#da22ac'];
             break;
-            case "img/e.png":
+            case "img/e.png": //RdBu
                 SPIcol=['#4287b4','#98d5a4','#dbf19f','#fcf9b183','#fdf2a8','#fa9b59','#b11746','#da22ac'];
             break;
-            case "img/d.png":
+            case "img/d.png": //RdYlBu
                 SPIcol=['#3c57a5','#7db3d4','#cce9ef','#faf9c079','#fee59b','#f99657','#af0926','#da22ac'];
             break;
-            case "img/c.png":
-                SPIcol=['#477e5b','#63bb61','#cae983','#faf6ad3b','#fee698','#7e5e4a','#ac0726','#da22ac'];
+            case "img/c.png": //RdYlGn
+                SPIcol=['#477e5b','#63bb61','#cae983','#faf6ad3b','#fee698','#f7a776','#ac0726','#da22ac'];
             break;
-            case "img/b.png":
+            case "img/b.png": //Theresold5
                 SPIcol=['#ffffff00','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#ffffff00','#da22ac'];
             break;
-            case "img/a.png":
+            case "img/a.png": //Theresold7
                 SPIcol=['#000','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#6b0404','#da22ac'];
             break;
         }
@@ -252,7 +252,7 @@ var mymap = L.map('mapid', {
     var legend = L.control({position: 'topleft'});//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legenda');
-        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI colors: <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RdBu</option><option value="img/d.png">RdYlBu</option><option value="img/c.png">RdYlGn</option><option value="img/b.png">Theresold5</option><option value="img/a.png" selected="">Theresold7</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img id="colgimg" onmouseover="disableDrag()" onmouseout="enableDrag()" src="img/a.png"/><div id="opaDiv"><span>Opacity:</span><input type="range" min="0" max="100" value="40" class="slider" id="opac" onmouseover="disableDrag()" onmouseout="enableDrag()" onchange="chOpac()"/><span id="valOpac">0.4</span></div></div>';
+        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI colors: <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RdBu</option><option value="img/d.png">RdYlBu</option><option value="img/c.png">RdYlGn</option><option value="img/b.png">Theresold5</option><option value="img/a.png" selected="">Theresold7</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img id="colgimg" onmouseover="disableDrag()" onmouseout="enableDrag()" src="img/a.png"/><div id="opaDiv"><span>Opacity:</span><input type="range" min="0" max="100" value="70" class="slider" id="opac" onmouseover="disableDrag()" onmouseout="enableDrag()" onchange="chOpac()"/><span id="valOpac">0.7</span></div></div>';
         div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
         return div;
     }; //This add the div section that contains the drop down menu called mainBar
