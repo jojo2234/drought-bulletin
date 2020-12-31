@@ -25,6 +25,11 @@
 </body>
 <!-- All main javascript is inserted in the html page due to performance results-->
 <script>
+    var noRefresh = 0;
+    var layerGEO;
+    var celleGeo;
+    var SPIcol=['#000','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#6b0404','#da22ac'];
+    var opacLay = 0.7;
     //'tiles/st/{z}/{x}/{y}.jpg'
     //'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g'
 var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
@@ -68,11 +73,7 @@ var mymap = L.map('mapid', {
     "<span>Satellite</span>": satellite,
     "<span>Streets</span>": standard
     }; //Modify variable used in layer button
-    var noRefresh = 0;
-    var layerGEO;
-    var celleGeo;
-    var SPIcol=['#000','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#6b0404','#da22ac'];
-    var opacLay = 0.7;
+    
     /**
      * Fill drop-down menu (combo box) with data value stored in database each time the page is refreshed
      **/
@@ -252,7 +253,7 @@ var mymap = L.map('mapid', {
     var legend = L.control({position: 'topleft'});//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legenda');
-        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI colors: <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RdBu</option><option value="img/d.png">RdYlBu</option><option value="img/c.png">RdYlGn</option><option value="img/b.png">Theresold5</option><option value="img/a.png" selected="">Theresold7</option></select></span><span>Cells: <input type="checkbox" id="celid" onclick="draRemCelle()"/></span></div><div id="colleg"><img id="colgimg" onmouseover="disableDrag()" onmouseout="enableDrag()" src="img/a.png"/><div id="opaDiv"><span>Opacity:</span><input type="range" min="0" max="100" value="70" class="slider" id="opac" onmouseover="disableDrag()" onmouseout="enableDrag()" onchange="chOpac()"/><span id="valOpac">0.7</span></div></div>';
+        div.innerHTML = '<div class="mainBar"><span>Date: <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12-01</option></select></span><span> Month: <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI colors: <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RdBu</option><option value="img/d.png">RdYlBu</option><option value="img/c.png">RdYlGn</option><option value="img/b.png">Theresold5</option><option value="img/a.png" selected="">Theresold7</option></select></span></div><div id="colleg"><img id="colgimg" onmouseover="disableDrag()" onmouseout="enableDrag()" src="img/a.png"/><div id="opaDiv"><span>Opacity:</span><input type="range" min="0" max="100" value="70" class="slider" id="opac" onmouseover="disableDrag()" onmouseout="enableDrag()" onchange="chOpac()"/><span id="valOpac">0.7</span></div></div>';
         div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
         return div;
     }; //This add the div section that contains the drop down menu called mainBar
@@ -276,6 +277,10 @@ var mymap = L.map('mapid', {
     document.getElementsByTagName('label')[1].firstChild.style="display: inline;";
     riempiCampiData();//When everything is done the function to fill the data drop-down menu is called
     document.getElementsByClassName('leaflet-control-container')[0].append(document.getElementById("colleg"));
+    document.getElementsByClassName('leaflet-control-layers-selector')[2].checked = false;//The radious button have the same class.
+    var celLayer = document.createElement('label');
+    celLayer.innerHTML = '<div><input type="checkbox" id="celid" class="leaflet-control-layers-selector" onclick="draRemCelle()"/><span>Cells</span></div>';
+    document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(celLayer);
     //If the used browser is Internet Explorer (not supported) or Microsoft Edge (old version supported)
     //This if move the mainbar at the top of body in this way it works
     if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {

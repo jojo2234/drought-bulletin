@@ -3,7 +3,7 @@ html, body, #mapid {height: 100%;width: 100vw;}
 h1{text-align:center;}
 #sets{text-align:center;padding: 4px;padding-bottom: 12px;}
 .legenda leaflet-control{border:none;top:0px;left:0px;z-index: 1001;}
-.mainBar {position: absolute;width: 500px;height: 40px;z-index: 1001;top: auto;left: 0;background: #fff; text-align: center; border-radius: 8px;}
+.mainBar {position: absolute;width: 450px;height: 40px;z-index: 1001;top: auto;left: 0;background: #fff; text-align: center; border-radius: 8px;}
 .mainBar span{padding: 2px; margin: 2px; font-weight: bold; font-family: Verdana, Geneva, Tahoma, sans-serif;}
 .mainBar span *{margin-top: 12px;}
 #colleg{position: fixed;bottom: 18px;left: 18px;z-index: 1001;width: 98%;}
