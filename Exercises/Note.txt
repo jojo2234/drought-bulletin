@@ -16,3 +16,4 @@ Prima si cancellano sempre quelle che hanno i riferimenti a chiavi esterne.
 LOAD DATA INFILE 'C:\Users\Alex\Documents\GitHub\drought-bulletin\Data\celleForDB_Centroid.csv' INTO TABLE celle FIELDS TERMINATED BY ',' ENCLOSED BY "" LINES TERMINATED BY '\n';
 LOAD DATA INFILE 'celleForDB_Centroid.csv' INTO TABLE celle FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';
 LOAD DATA INFILE 'spi_forDB.csv' INTO TABLE spi FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+Si può usare come mappe anche: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
