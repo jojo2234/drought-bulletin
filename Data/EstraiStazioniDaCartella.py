@@ -20,8 +20,11 @@ def do_extractionfrom(directoryentry):
             workbook.active = i
             print("\tOperating on sheet: " + workbook.active.title)
             foglio = workbook.active
-            for row in foglio.iter_rows(min_row=1,max_row=8,min_col=1,max_col=20):
-                print(row.value) #Errato?
+            for x in range(0, foglio.max_row):
+                for y in range(0, foglio.max_column):
+                    print(foglio.cell(x,y).value)
+            #for row in foglio.iter_rows(min_row=1,max_row=8,min_col=1,max_col=20):
+            #    print(row.value) #Errato?
             #print("\n\t " + str(foglio["B3"].value))
         print("\n")
     elif directoryentry.name.endswith('xls'):
@@ -31,12 +34,9 @@ def do_extractionfrom(directoryentry):
         for i in range(0,numsht):
             sht = book.sheet_by_index(i)
             print("\tOperating on sheet: " + sht.name)
-            for x in range(1,8):
-                for y in range(1,20):
-                    print(book.cell(x,y).value)
-            #for cell in sht.row(8):
-            #    for cell in sht.col(20):
-            #        print(cell.value) #Errato?
+            #for x in range(1,sht.nrows):
+            #    for y in range(1,sht.ncols):
+            #        print(sht.cell_value(x,y))
     else:
         print("\tFile not supported")
 
