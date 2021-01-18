@@ -17,3 +17,4 @@ LOAD DATA INFILE 'C:\Users\Alex\Documents\GitHub\drought-bulletin\Data\celleForD
 LOAD DATA INFILE 'celleForDB_Centroid.csv' INTO TABLE celle FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';
 LOAD DATA INFILE 'spi_forDB.csv' INTO TABLE spi FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
 Si può usare come mappe anche: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+LOAD DATA INFILE 'C:\\Users\\Alex\\Documents\\GitHub\\drought-bulletin\\Data\\SubDistretti.csv' INTO TABLE distretto FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n';
