@@ -192,7 +192,7 @@ def do_extractionfrom(directoryentry):
                             csv_file = open("stazioni_"+sht.name+".csv", "w")
                             stringa = ""
                             for a in range(0,len(nomiStat)):
-                                stringa = (a+1)+";"+xcoord[a]+";"+ycoord[a]+";"+nomiStat[a]+";"+quota[a]+";"+distr[a]+"\n"
+                                stringa += str(a+1)+";"+str(xcoord[a])+";"+str(ycoord[a])+";"+str(nomiStat[a])+";"+str(quota[a])+";"+str(distr[a])+"\n"
                             csv_file.write(stringa)
                             csv_file.close()
                             break
@@ -235,7 +235,7 @@ def do_extractionfrom(directoryentry):
                             csv_file = open("stazioni_"+sht.name+".csv", "w")
                             stringa = ""
                             for a in range(0,len(nomiStat)):
-                                stringa = (a+1)+";"+xcoord[a]+";"+ycoord[a]+";"+nomiStat[a]+";"+quota[a]+";"+distr[a]+"\n"
+                                stringa += str(a+1)+";"+str(xcoord[a])+";"+str(ycoord[a])+";"+str(nomiStat[a])+";"+str(quota[a])+";"+str(distr[a])+"\n"
                             csv_file.write(stringa)
                             csv_file.close()
                             break
