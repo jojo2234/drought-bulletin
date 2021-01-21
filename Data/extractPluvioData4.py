@@ -10,14 +10,14 @@ print("\tOperating on sheet: " + sht.name)
 a = 0 #Id precipitazione giornaliera
 csv_file = open("pluvosta71.csv", "w")
 stringa = ""
-for x in range(11,sht.nrows):
-    for y in range(2,72):
+for x in range(10,sht.nrows):
+    for y in range(1,71):
         a+=1
-        if(str(sht.cell(x,y).value) == "None" or str(sht.cell(x,y).value) == "-9999"):
+        if(str(sht.cell(x,y).value) == "None" or str(sht.cell(x,y).value) == "-9999" or str(sht.cell(x,y).value) == "-9999.0"):
             vals = 0
         else:
             vals = sht.cell(x,y).value
             #Questo file ha anno mese e giorno separati in questordine
-        stringa += str(a)+";"+str(sht.cell(x,3).value)+"/"+str(sht.cell(x,2).value)+"/"+str(sht.cell(x,1).value)+";"+str(vals)+";"+str(sht.cell(2,y).value)+"\n"
+        stringa += str(a)+";"+str(int(sht.cell(x,2).value))+"/"+str(int(sht.cell(x,1).value))+"/"+str(int(sht.cell(x,0).value))+";"+str(vals)+";"+str(sht.cell(1,y).value)+"\n"
 csv_file.write(stringa)
 csv_file.close()
