@@ -28,6 +28,10 @@ switch($_GET["funzione"]){
 	$sql = "SELECT DISTINCT data FROM spi ORDER BY data DESC";
 	$campi = array('data' => 'utf8_encode');
 	break;
+	case '4':
+	$sql = "SELECT Latitudine, Longitudine, Nome FROM stazione";
+	$campi = array('Latitudine' => 'floatval', 'Longitudine' => 'floatval', 'Nome' => 'utf8_encode');
+	break;
 	default:
 	echo json_encode(array(	"status" => "error","dettagli" => "parametro mancante"));exit(1);
 	break;

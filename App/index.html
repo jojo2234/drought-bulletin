@@ -144,7 +144,7 @@ var mymap = L.map('mapid', {
     var geojsonFeature = '{"type":"FeatureCollection", "features":['; //Used to store the GeoJSON string
 
     /**
-     * Function draRemCelle() show the grid with all cells 
+     * Function draRemCelle() shows the grid with all cells 
      **/
     function draRemCelle(){
         if(document.getElementById("celid").checked == true){
@@ -154,6 +154,25 @@ var mymap = L.map('mapid', {
         }else{
             mymap.removeLayer(celleGeo);
         }
+    }
+
+    /**
+     * Function showPluvoStats() shows markers where pluviometric stations are located
+     **/
+    function showPluvoStats(){
+        var stationsPl = '{"type":"FeatureCollection", "features":[';
+        mymap.removeLayer(layerGEO);
+        //Costretto a mettere lo 0 fuori perchè altrimenti la virgola va su l'ultimo e non ci vuole.
+        $.getJSON("api/queries.php?funzione=4", function (data) {
+        stationsPl += '{"type":"Feature","geometry":{"type":"Point","coordinates":['+JSON.parse(data[0]["Longitudine"])+','+JSON.parse(data[0]["Latitudine"])+']},"properties":{"name":"'+data[0]["Nome"]+'"}}';
+        for (i = 1; i < data.length; i++) {
+            stationsPl += ',{"type":"Feature","geometry":{"type":"Point","coordinates":['+JSON.parse(data[i]["Longitudine"])+','+JSON.parse(data[i]["Latitudine"])+']},"properties":{"name":"'+data[i]["Nome"]+'"}}';
+        }
+        stationsPl += ']}';
+        //document.getElementsByTagName("body")[0].innerHTML = stationsPl;
+        L.geoJSON(JSON.parse(stationsPl)).addTo(mymap);
+        });
+        //var marker = L.marker([13.1035,41.3125]).addTo(mymap);
     }
 
     /**
@@ -280,7 +299,10 @@ var mymap = L.map('mapid', {
     document.getElementsByClassName('leaflet-control-layers-selector')[2].checked = false;//The radious button have the same class.
     var celLayer = document.createElement('label');
     celLayer.innerHTML = '<div><input type="checkbox" id="celid" class="leaflet-control-layers-selector" onclick="draRemCelle()"/><span>Cells</span></div>';
+    var pluvLay = document.createElement('label');
+    pluvLay.innerHTML = '<div><input type="checkbox" id="pluid" class="leaflet-control-layers-selector" onclick="showPluvoStats()"/><span>Stations</span></div>';
     document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(celLayer);
+    document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(pluvLay);
     //If the used browser is Internet Explorer (not supported) or Microsoft Edge (old version supported)
     //This if move the mainbar at the top of body in this way it works
     if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
