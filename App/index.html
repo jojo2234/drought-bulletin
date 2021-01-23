@@ -28,6 +28,7 @@
     var noRefresh = 0;
     var layerGEO;
     var celleGeo;
+    var statsPos;
     var SPIcol=['#000','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#6b0404','#da22ac'];
     var opacLay = 0.7;
     //'tiles/st/{z}/{x}/{y}.jpg'
@@ -43,7 +44,7 @@ var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}
     }) //Save the map layer satellite tiles from mapbox website
     //'tiles/sr/{z}/{x}/{y}.png'
 //Old maps payment now are offline 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g'
-var standard = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
+var standard = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from MOBAC',
         maxZoom: 13,
         id: 'mapbox/streets-v11',
@@ -73,6 +74,13 @@ var mymap = L.map('mapid', {
     "<span>Satellite</span>": satellite,
     "<span>Streets</span>": standard
     }; //Modify variable used in layer button
+
+    /**
+     * This function show a div box where to get data about the selected pluviometric station
+     **/
+    function showDivPrec(){
+        alert("Work in progress...");
+    }
     
     /**
      * Fill drop-down menu (combo box) with data value stored in database each time the page is refreshed
@@ -91,6 +99,16 @@ var mymap = L.map('mapid', {
         riempiCampiMesi();
     });
     }
+
+    /**
+     * Manage click events on pluvo stations 
+     **/
+    function setClickOnStat(feature, layer){
+        if (feature.properties && feature.properties.name) {
+            layer.bindPopup("<div style='text-align: center;'><p style='margin-bottom: 0px;'>"+feature.properties.name + "</p><p style='font-size:10px;font-style:italic;margin-top: 0px;'><a href='#"+feature.properties.idSta+"' onclick='showDivPrec()'>Explore</a></p></div>");
+        }
+    }
+
     //Set the Pop up SPI value on click
     function onEachFeature(feature, layer) {
         if (feature.properties && feature.properties.spi) {
@@ -142,7 +160,6 @@ var mymap = L.map('mapid', {
 
     var tmpJSON;
     var geojsonFeature = '{"type":"FeatureCollection", "features":['; //Used to store the GeoJSON string
-
     /**
      * Function draRemCelle() shows the grid with all cells 
      **/
@@ -161,17 +178,21 @@ var mymap = L.map('mapid', {
      **/
     function showPluvoStats(){
         var stationsPl = '{"type":"FeatureCollection", "features":[';
-        mymap.removeLayer(layerGEO);
-        //Costretto a mettere lo 0 fuori perchè altrimenti la virgola va su l'ultimo e non ci vuole.
-        $.getJSON("api/queries.php?funzione=4", function (data) {
-        stationsPl += '{"type":"Feature","geometry":{"type":"Point","coordinates":['+JSON.parse(data[0]["Longitudine"])+','+JSON.parse(data[0]["Latitudine"])+']},"properties":{"name":"'+data[0]["Nome"]+'"}}';
-        for (i = 1; i < data.length; i++) {
-            stationsPl += ',{"type":"Feature","geometry":{"type":"Point","coordinates":['+JSON.parse(data[i]["Longitudine"])+','+JSON.parse(data[i]["Latitudine"])+']},"properties":{"name":"'+data[i]["Nome"]+'"}}';
+        if(document.getElementById("pluid").checked == true){
+            mymap.removeLayer(layerGEO);
+            //Costretto a mettere lo 0 fuori perchè altrimenti la virgola va su l'ultimo e non ci vuole.
+            $.getJSON("api/queries.php?funzione=4", function (data) {
+            stationsPl += '{"type":"Feature","geometry":{"type":"Point","coordinates":['+JSON.parse(data[0]["Longitudine"])+','+JSON.parse(data[0]["Latitudine"])+']},"properties":{"name":"'+data[0]["Nome"]+'","idSta":"'+data[0]["ID"]+'"}}';
+            for (i = 1; i < data.length; i++) {
+                stationsPl += ',{"type":"Feature","geometry":{"type":"Point","coordinates":['+JSON.parse(data[i]["Longitudine"])+','+JSON.parse(data[i]["Latitudine"])+']},"properties":{"name":"'+data[i]["Nome"]+'","idSta":"'+data[i]["ID"]+'"}}';
+            }
+            stationsPl += ']}';
+            //document.getElementsByTagName("body")[0].innerHTML = stationsPl;
+            statsPos=L.geoJSON(JSON.parse(stationsPl),{onEachFeature: setClickOnStat}).addTo(mymap);
+            });
+        }else{
+            mymap.removeLayer(statsPos);
         }
-        stationsPl += ']}';
-        //document.getElementsByTagName("body")[0].innerHTML = stationsPl;
-        L.geoJSON(JSON.parse(stationsPl)).addTo(mymap);
-        });
         //var marker = L.marker([13.1035,41.3125]).addTo(mymap);
     }
 
