@@ -21,7 +21,7 @@
     <script src="js/jquery.min.js"></script><!--JQuery liberary min used to get data via JSON-->
 </head>
 <body>
-    <div id='mapid'></div> <!--The map is inserte here!-->
+    <div id='mapid'><div id='overPluvo' style="visibility: hidden;"><p>ciao</p></div></div> <!--The map is inserted here!-->
 </body>
 <!-- All main javascript is inserted in the html page due to performance results-->
 <script>
@@ -44,7 +44,7 @@ var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}
     }) //Save the map layer satellite tiles from mapbox website
     //'tiles/sr/{z}/{x}/{y}.png'
 //Old maps payment now are offline 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g'
-var standard = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+var standard = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery from MOBAC',
         maxZoom: 13,
         id: 'mapbox/streets-v11',
@@ -78,8 +78,13 @@ var mymap = L.map('mapid', {
     /**
      * This function show a div box where to get data about the selected pluviometric station
      **/
-    function showDivPrec(){
-        alert("Work in progress...");
+    function showDivPrec(elem){
+        document.getElementById("overPluvo").style="visibility:visible";
+        //console.log(window.location.href);
+        //console.log("ID: " + elem);
+        $.getJSON("api/queries.php?funzione=5&id="+elem, function (data) {
+            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;'>ID: "+elem+" Nome: "+data[0]["Nome"]+" QuotaDTM: "+data[0]["QuotaDTM"]+" Codice Distretto: "+data[0]["ID_Distretto"]+"<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;'>X</a></span></div><p>Show information in a date range or for month.</p><br/><div>From date: <input type='date'/> To: <input type='date'/> or select month: <select><option>Genuary</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>Agoust</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>";
+        });
     }
     
     /**
@@ -105,7 +110,7 @@ var mymap = L.map('mapid', {
      **/
     function setClickOnStat(feature, layer){
         if (feature.properties && feature.properties.name) {
-            layer.bindPopup("<div style='text-align: center;'><p style='margin-bottom: 0px;'>"+feature.properties.name + "</p><p style='font-size:10px;font-style:italic;margin-top: 0px;'><a href='#"+feature.properties.idSta+"' onclick='showDivPrec()'>Explore</a></p></div>");
+            layer.bindPopup("<div style='text-align: center;'><p style='margin-bottom: 0px;'>"+feature.properties.name + "</p><p style='font-size:10px;font-style:italic;margin-top: 0px;'><a id='"+feature.properties.idSta+"' href='#' onclick='showDivPrec(this.id)'>Explore</a></p></div>");
         }
     }
 
