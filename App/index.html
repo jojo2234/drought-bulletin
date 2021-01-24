@@ -75,6 +75,11 @@ var mymap = L.map('mapid', {
     "<span>Streets</span>": standard
     }; //Modify variable used in layer button
 
+
+    function closeWin(){
+        document.getElementById("overPluvo").style="visibility:hidden";
+    }
+
     /**
      * This function show a div box where to get data about the selected pluviometric station
      **/
@@ -83,7 +88,7 @@ var mymap = L.map('mapid', {
         //console.log(window.location.href);
         //console.log("ID: " + elem);
         $.getJSON("api/queries.php?funzione=5&id="+elem, function (data) {
-            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;'>ID: "+elem+" Nome: "+data[0]["Nome"]+" QuotaDTM: "+data[0]["QuotaDTM"]+" Codice Distretto: "+data[0]["ID_Distretto"]+"<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;'>X</a></span></div><p>Show information in a date range or for month.</p><br/><div>From date: <input type='date'/> To: <input type='date'/> or select month: <select><option>Genuary</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>Agoust</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>";
+            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;'>ID: "+elem+" Nome: "+data[0]["Nome"]+" QuotaDTM: "+data[0]["QuotaDTM"]+" Codice Distretto: "+data[0]["ID_Distretto"]+"<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for month.</p><br/><div>From date: <input type='date'/> To: <input type='date'/> or select month: <select><option>Genuary</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>Agoust</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>";
         });
     }
     
