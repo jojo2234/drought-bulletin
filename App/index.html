@@ -31,6 +31,7 @@
     var statsPos;
     var SPIcol=['#000','#2f71ec','#5af53b','#d9dadb42','#eea724','#e01f1f','#6b0404','#da22ac'];
     var opacLay = 0.7;
+    var idDivPrec;
     //'tiles/st/{z}/{x}/{y}.jpg'
     //'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g'
 var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
@@ -75,7 +76,6 @@ var mymap = L.map('mapid', {
     "<span>Streets</span>": standard
     }; //Modify variable used in layer button
 
-
     function closeWin(){
         document.getElementById("overPluvo").style="visibility:hidden";
     }
@@ -87,8 +87,9 @@ var mymap = L.map('mapid', {
         document.getElementById("overPluvo").style="visibility:visible";
         //console.log(window.location.href);
         //console.log("ID: " + elem);
+        idDivPrec = elem;
         $.getJSON("api/queries.php?funzione=5&id="+elem, function (data) {
-            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;'>ID: "+elem+" Nome: "+data[0]["Nome"]+" QuotaDTM: "+data[0]["QuotaDTM"]+" Codice Distretto: "+data[0]["ID_Distretto"]+"<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for month.</p><br/><div>From date: <input type='date'/> To: <input type='date'/> or select month: <select><option>Genuary</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>Agoust</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>";
+            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;padding-top:3px;'>ID: "+elem+" Nome: "+data[0]["Nome"]+" QuotaDTM: "+data[0]["QuotaDTM"]+" Codice Distretto: "+data[0]["ID_Distretto"]+"<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for month.</p><br/><div>From date: <input id='indt' type='date' onchange='pluvoGraphDaily()'/> To: <input id='fidt' type='date' onchange='pluvoGraphDaily()'/> or select month: <select id='selmo' onchange='pluvoGraphMonthly()'><option></option><option>Genuary</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>Agoust</option><option>September</option><option>October</option><option>November</option><option>December</option></select><div id='chdivg'></div></div>";
         });
     }
     
@@ -300,6 +301,149 @@ var mymap = L.map('mapid', {
         mymap.dragging.enable();
     }
 
+    /**
+     * User select a month and that month is show for each year available for that station
+    */
+    function pluvoGraphMonthly(){
+        var selmonth = document.getElementById("selmo").value;
+        if(selmonth != undefined && selmonth != ""){
+            $.getJSON("api/queries.php?funzione=7&slm="+selmonth+"&id="+idDivPrec, function (data) {
+            var dataText = "";
+            var sum = 0;
+            var avg = 0;
+            for (i = 0; i < data.length; i++) {
+                if (i == 0) {
+                    dataText = (dataText + '[{"date":"' + data[i]["Anno"] + '", "val":' + data[i]["Valore"] + '}');
+                } else {
+                    dataText = (dataText + ',{"date":"' + data[i]["Anno"] + '", "val":' + data[i]["Valore"] + '}');
+                }
+                sum = sum + data[i]["Valore"];
+            }
+            avg = (sum / (data.length));
+            dataText = dataText + ']';
+            var jsonData = JSON.parse(dataText);
+            var chart = AmCharts.makeChart("chdivg", {
+                "type": "serial",
+                "theme": "light",
+                "marginRight": 80,
+                "marginTop": 17,
+                "autoMarginOffset": 20,
+                "dataProvider": jsonData,
+                "valueAxes": [{
+                    "logarithmic": true,
+                    "dashLength": 1,
+                    "guides": [{
+                        "dashLength": 6,
+                        "inside": true,
+                        "label": "value",
+                        "lineAlpha": 1,
+                        "value": avg
+                    }],
+                    "position": "left"
+                }],
+                "graphs": [{
+                    "bullet": "round",
+                    "id": "g1",
+                    "bulletBorderAlpha": 1,
+                    "bulletColor": "#FFFFFF",
+                    "lineColor": "#dd6108",
+                    "bulletSize": 4,
+                    "lineThickness": 1,
+                    "title": "Monthly",
+                    "type": "smoothedLine",
+                    "useLineColorForBulletBorder": true,
+                    "valueField": "valuw"
+                }],
+                "chartScrollbar": {},
+                "chartCursor": {
+                    "valueLineEnabled": true,
+                    "valueLineBalloonEnabled": true,
+                    "valueLineAlpha": 0.5,
+                    "fullWidth": true,
+                    "cursorAlpha": 0.05
+                },
+                "dataDateFormat": "YYYY",
+                "categoryField": "date",
+                "categoryAxis": {
+                    "parseDates": true
+                }
+            });
+            });
+        }
+    }
+
+    /**
+     * User select a date range and data are shown for that range. 
+     */
+    function pluvoGraphDaily(){
+    var startdate = document.getElementById("indt").value;
+    var endate = document.getElementById("fidt").value;
+        if(startdate != undefined && startdate != "" && endate != undefined && endate != ""){
+            $.getJSON("api/queries.php?funzione=6&st="+startdate+"&fi="+endate+"&id="+idDivPrec, function (data) {
+                var dataText = "";
+                var sum = 0;
+                var avg = 0;
+                for (i = 0; i < data.length; i++) {
+                    if (i == 0) {
+                        dataText = (dataText + '[{"date":"' + data[i]["Data"] + '", "val":' + data[i]["Valore"] + '}');
+                    } else {
+                        dataText = (dataText + ',{"date":"' + data[i]["Data"] + '", "val":' + data[i]["Valore"] + '}');
+                    }
+                    sum = sum + data[i]["Valore"];
+                }
+                avg = (sum / (data.length));
+                dataText = dataText + ']';
+                var jsonData = JSON.parse(dataText);
+                var chart = AmCharts.makeChart("chdivg", {
+                    "type": "serial",
+                    "theme": "light",
+                    "marginRight": 80,
+                    "marginTop": 17,
+                    "autoMarginOffset": 20,
+                    "dataProvider": jsonData,
+                    "valueAxes": [{
+                        "logarithmic": true,
+                        "dashLength": 1,
+                        "guides": [{
+                            "dashLength": 6,
+                            "inside": true,
+                            "label": "media",
+                            "lineAlpha": 1,
+                            "value": avg
+                        }],
+                        "position": "left"
+                    }],
+                    "graphs": [{
+                        "bullet": "round",
+                        "id": "g1",
+                        "bulletBorderAlpha": 1,
+                        "bulletColor": "#FFFFFF",
+                        "lineColor": "#dd6108",
+                        "bulletSize": 7,
+                        "lineThickness": 2,
+                        "title": "DaDate range",
+                        "type": "smoothedLine",
+                        "useLineColorForBulletBorder": true,
+                        "valueField": "media"
+                    }],
+                    "chartScrollbar": {},
+                    "chartCursor": {
+                        "valueLineEnabled": true,
+                        "valueLineBalloonEnabled": true,
+                        "valueLineAlpha": 0.5,
+                        "fullWidth": true,
+                        "cursorAlpha": 0.05
+                    },
+                    "dataDateFormat": "YYYY-MM-DD",
+                    "categoryField": "date",
+                    "categoryAxis": {
+                        "parseDates": true
+                    }
+                });
+            });
+        }
+    }
+
     var legend = L.control({position: 'topleft'});//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legenda');
@@ -344,5 +488,5 @@ var mymap = L.map('mapid', {
         alert("Screen resolution could not be supported!");
     }
 </script>
-
+<script src="js/amcharts.js"></script>
 </html>

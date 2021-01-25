@@ -36,6 +36,14 @@ switch($_GET["funzione"]){
 		$sql = "SELECT Nome, QuotaDTM, ID_Distretto FROM stazione WHERE ID=".$_GET["id"].";";
 		$campi = array('Nome' => 'utf8_encode', 'QuotaDTM' => 'intval', 'ID_Distretto' => 'intval');
 		break;
+	case '6':
+		$sql = "SELECT Data, Valore FROM precipitazionegiornaliera WHERE ID=".$_GET["id"]."AND Data BETWEEN '".$_GET["st"]."' AND '".$_GET["fi"]."' ORDER BY Data DESC;";
+		$campi = array('Data' => 'utf8_enocde', 'Valore' => 'floatval');
+		break;
+	case '7':
+		$sql = "SELECT Anno, Valore FROM precipitazionemensile WHERE ID=".$_GET["id"]."AND Mese='".$_GET["slm"]."';";
+		$campi = array('Anno' => 'intval', 'Valore' => 'floatval');
+		break;
 	default:
 	echo json_encode(array(	"status" => "error","dettagli" => "parametro mancante"));exit(1);
 	break;
