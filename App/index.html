@@ -89,7 +89,12 @@ var mymap = L.map('mapid', {
         //console.log("ID: " + elem);
         idDivPrec = elem;
         $.getJSON("api/queries.php?funzione=5&id="+elem, function (data) {
-            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;padding-top:3px;'>ID: "+elem+" Nome: "+data[0]["Nome"]+" QuotaDTM: "+data[0]["QuotaDTM"]+" Codice Distretto: "+data[0]["ID_Distretto"]+"<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for month.</p><br/><div>From date: <input id='indt' type='date' onchange='pluvoGraphDaily()'/> To: <input id='fidt' type='date' onchange='pluvoGraphDaily()'/> or select month: <select id='selmo' onchange='pluvoGraphMonthly()'><option></option><option>Genuary</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>Agoust</option><option>September</option><option>October</option><option>November</option><option>December</option></select><div id='chdivg'></div></div>";
+            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;padding-top:3px;'>ID: "+elem+" Nome: "+data[0]["Nome"]+" QuotaDTM: "+data[0]["QuotaDTM"]+" Codice Distretto: "+data[0]["ID_Distretto"]+"<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for month.</p><br/><div>From date: <input id='indt' type='date' onchange='pluvoGraphDaily()'/> To: <input id='fidt' type='date' onchange='pluvoGraphDaily()'/> or select month: <select id='selmo' onchange='pluvoGraphMonthly()'><option value='0'></option><option value='1'>Genuary</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>Agoust</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select><div id='chdivg'></div></div>";
+            $.getJSON("api/queries.php?funzione=8&id="+elem, function (data) {
+                if(data == undefined || data.length <= 0){
+                    document.getElementById("selmo").disabled = true;
+                }
+            });
         });
     }
     
@@ -306,7 +311,7 @@ var mymap = L.map('mapid', {
     */
     function pluvoGraphMonthly(){
         var selmonth = document.getElementById("selmo").value;
-        if(selmonth != undefined && selmonth != ""){
+        if(selmonth != undefined && selmonth != "" && selmonth != "0"){
             $.getJSON("api/queries.php?funzione=7&slm="+selmonth+"&id="+idDivPrec, function (data) {
             var dataText = "";
             var sum = 0;
@@ -322,6 +327,7 @@ var mymap = L.map('mapid', {
             avg = (sum / (data.length));
             dataText = dataText + ']';
             var jsonData = JSON.parse(dataText);
+            //document.getElementsByTagName("body")[0].innerHTML = dataText;
             var chart = AmCharts.makeChart("chdivg", {
                 "type": "serial",
                 "theme": "light",
@@ -380,6 +386,7 @@ var mymap = L.map('mapid', {
     var endate = document.getElementById("fidt").value;
         if(startdate != undefined && startdate != "" && endate != undefined && endate != ""){
             $.getJSON("api/queries.php?funzione=6&st="+startdate+"&fi="+endate+"&id="+idDivPrec, function (data) {
+                if(data != null){
                 var dataText = "";
                 var sum = 0;
                 var avg = 0;
@@ -440,6 +447,7 @@ var mymap = L.map('mapid', {
                         "parseDates": true
                     }
                 });
+                }
             });
         }
     }

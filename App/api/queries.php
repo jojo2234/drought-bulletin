@@ -37,11 +37,17 @@ switch($_GET["funzione"]){
 		$campi = array('Nome' => 'utf8_encode', 'QuotaDTM' => 'intval', 'ID_Distretto' => 'intval');
 		break;
 	case '6':
-		$sql = "SELECT Data, Valore FROM precipitazionegiornaliera WHERE ID=".$_GET["id"]."AND Data BETWEEN '".$_GET["st"]."' AND '".$_GET["fi"]."' ORDER BY Data DESC;";
+		$sql = "SELECT Data, Valore FROM precipitazionegiornaliera WHERE ID_Stazione=".$_GET["id"]." AND Data BETWEEN '".$_GET["st"]."' AND '".$_GET["fi"]."' ORDER BY Data DESC;";
 		$campi = array('Data' => 'utf8_enocde', 'Valore' => 'floatval');
 		break;
 	case '7':
-		$sql = "SELECT Anno, Valore FROM precipitazionemensile WHERE ID=".$_GET["id"]."AND Mese='".$_GET["slm"]."';";
+		$sql = "SELECT Anno, Valore FROM precipitazionemensile WHERE ID_Stazione=".$_GET["id"]." AND Mese=".$_GET["slm"].";";
+		//echo $sql;
+		$campi = array('Anno' => 'intval', 'Valore' => 'floatval');
+		break;
+	case '8':
+		$sql = "SELECT Mese FROM precipitazionemensile WHERE ID_Stazione=".$_GET["id"].";";
+		//echo $sql;
 		$campi = array('Anno' => 'intval', 'Valore' => 'floatval');
 		break;
 	default:

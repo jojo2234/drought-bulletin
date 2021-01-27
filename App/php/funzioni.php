@@ -22,19 +22,23 @@ function esegui_query($sql, $campi)
 {
 	include('../api/config.php');
 	$risultato = select($db,$sql);
-	$return = array();
-	//Esegue la query
-	for($i = 0; $i < count($risultato); $i++)
-	{
-		foreach($campi as $chiave => $formato)
+	if($risultato != null){
+		$return = array();
+		//Esegue la query
+		for($i = 0; $i < count($risultato); $i++)
 		{
-			//Conrolla la validità del valore passato ed effettua un cast al tipo di formato
-			if(isset($risultato[$i][$chiave]))
-				$risultato[$i][$chiave] = $formato($risultato[$i][$chiave]);
+			foreach($campi as $chiave => $formato)
+			{
+				//Conrolla la validità del valore passato ed effettua un cast al tipo di formato
+				if(isset($risultato[$i][$chiave]))
+					$risultato[$i][$chiave] = $formato($risultato[$i][$chiave]);
+			}
+			$return[] = $risultato[$i];
 		}
-		$return[] = $risultato[$i];
+		closeDB($db);
+	}else{
+		$return = null;
 	}
-	closeDB($db);
 	return json_encode($return);
 }
 ?>

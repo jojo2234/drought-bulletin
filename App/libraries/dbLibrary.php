@@ -11,6 +11,7 @@ function select($conn,$sql){
     //Interroga il database
     $resultSet = mysqli_query($conn, $sql);
     if(!$resultSet) print("Errore esecuzione $sql:" . mysqli_error());
+    $records = array();
     while($rec=mysqli_fetch_assoc($resultSet)) $records[]=$rec;
     mysqli_free_result($resultSet);
     return $records;
