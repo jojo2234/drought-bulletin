@@ -4,7 +4,7 @@ function analizza_GET($parametro)
 {
 	if(isset($_GET[$parametro]))
 	{
-		//Effettua uno split dei parametri passati in GET composti da un numero funzione e un campo dati opzionale funzione=NUM:[Dati]
+		//SPLIT the in coming GET request in parameters example funzione=NUM:[Dati]
 		$numFunzione = $_GET[$parametro];
 		return explode(":", $numFunzione);
 	}
@@ -29,7 +29,7 @@ function esegui_query($sql, $campi)
 		{
 			foreach($campi as $chiave => $formato)
 			{
-				//Conrolla la validità del valore passato ed effettua un cast al tipo di formato
+				//Check reliability of the value and cast to the given format
 				if(isset($risultato[$i][$chiave]))
 					$risultato[$i][$chiave] = $formato($risultato[$i][$chiave]);
 			}
