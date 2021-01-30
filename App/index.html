@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8" /><!-- Viewport fullscreen, compatibile with mobile phone (maybe)-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -29,6 +30,9 @@
     <script src="./js/amcharts.js"></script>
     <script src="./js/serial.js"></script>
     <script src="./js/light.js"></script>
+    <script src="am4/core.js"></script>
+    <script src="am4/charts.js"></script>
+    <script src="am4/themes/animated.js"></script>
 </head>
 
 <body>
@@ -383,10 +387,93 @@
         }
     }
 
+
+    function pluvoGraphDaily() {
+        var startdate = document.getElementById("indt").value;
+        var endate = document.getElementById("fidt").value;
+        if (startdate != undefined && startdate != "" && endate != undefined && endate != "") {
+            $.getJSON("api/queries.php?funzione=6&st=" + startdate + "&fi=" + endate + "&id=" + idDivPrec, function (data) {
+                if (data != null) {
+                    var dataText = "";
+                    var sum = 0;
+                    var avg = 0;
+                    var names = [];
+                    for (i = 0; i < data.length; i++) {
+                        names[i] = (data[i]["Data"] + "");
+                        if (i == 0) {
+                            dataText = (dataText + '[{"date":"' + data[i]["Data"] + '", "media":' + data[i]["Valore"] + '}');
+                        } else {
+                            dataText = (dataText + ',{"date":"' + data[i]["Data"] + '", "media":' + data[i]["Valore"] + '}');
+                        }
+                        sum = sum + data[i]["Valore"];
+                    }
+                    avg = (sum / (data.length));
+                    dataText = dataText + ']';
+                    var jsonData = JSON.parse(dataText);
+                    am4core.ready(function () {
+                        // Themes begin
+                        am4core.useTheme(am4themes_animated);
+                        // Themes end
+                        var chart = am4core.create("chdivg", am4charts.XYChart);
+
+                        var dati = [];
+                        var value = 120;
+
+                        for (var i = 0; i < names.length; i++) {
+                            //value += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 5);
+                            value = data[i]["Valore"];
+                            dati.push({ category: names[i], value: value});
+                        }
+
+                        chart.data = dati;
+                        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+                        categoryAxis.renderer.grid.template.location = 0;
+                        categoryAxis.dataFields.category = "category";
+                        categoryAxis.renderer.minGridDistance = 15;
+                        categoryAxis.renderer.grid.template.location = 0.5;
+                        categoryAxis.renderer.grid.template.strokeDasharray = "1,3";
+                        categoryAxis.renderer.labels.template.rotation = -90;
+                        categoryAxis.renderer.labels.template.horizontalCenter = "left";
+                        categoryAxis.renderer.labels.template.location = 0.5;
+
+                        categoryAxis.renderer.labels.template.adapter.add("dx", function (dx, target) {
+                            return -target.maxRight / 2;
+                        })
+
+                        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+                        valueAxis.tooltip.disabled = true;
+                        valueAxis.renderer.ticks.template.disabled = true;
+                        valueAxis.renderer.axisFills.template.disabled = true;
+
+                        var series = chart.series.push(new am4charts.ColumnSeries());
+                        series.dataFields.categoryX = "category";
+                        series.dataFields.valueY = "value";
+                        series.tooltipText = "{valueY.value}";
+                        series.sequencedInterpolation = true;
+                        series.fillOpacity = 0;
+                        series.strokeOpacity = 1;
+                        series.strokeDashArray = "1,3";
+                        series.columns.template.width = 0.01;
+                        series.tooltip.pointerOrientation = "horizontal";
+
+                        var bullet = series.bullets.create(am4charts.CircleBullet);
+
+                        chart.cursor = new am4charts.XYCursor();
+
+                        chart.scrollbarX = new am4core.Scrollbar();
+                        chart.scrollbarY = new am4core.Scrollbar();
+                    });
+                } else {
+                    document.getElementById("chdivg").innerHTML = '<br/><h3 style="text-align:center;">No data available for the selected range!</h3>';
+                }
+            });
+        }
+    }
+
     /**
      * User select a date range and data are shown for that range. 
      */
-    function pluvoGraphDaily() {
+    function pluvoGraphDailyOld() {
         var startdate = document.getElementById("indt").value;
         var endate = document.getElementById("fidt").value;
         if (startdate != undefined && startdate != "" && endate != undefined && endate != "") {
@@ -435,7 +522,7 @@
                             "lineColor": "#dd6108",
                             "bulletSize": 4,
                             "lineThickness": 1,
-                            "title": "Monthly",
+                            "title": "Daily",
                             "type": "smoothedLine",
                             "useLineColorForBulletBorder": true,
                             "valueField": "media"
@@ -504,4 +591,5 @@
         alert("Screen resolution could not be supported!");
     }
 </script>
+
 </html>
