@@ -3,13 +3,13 @@ html, body, #mapid {height: 100%;width: 100vw;}
 h1{text-align:center;}
 #sets{text-align:center;padding: 4px;padding-bottom: 12px;}
 .legenda leaflet-control{border:none;top:0px;left:0px;z-index: 1001;}
-.mainBar {position: absolute;width: 450px;height: 40px;z-index: 1001;top: auto;left: 0;background: #fff; text-align: center; border-radius: 8px;}
-.mainBar span{padding: 2px; margin: 2px; font-weight: bold; font-family: Verdana, Geneva, Tahoma, sans-serif;}
+.mainBar {position: absolute;width: 460px;height: 40px;z-index: 1001;top: auto;left: 0;background: #fff; text-align: center; border-radius: 8px;}
+.mainBar span{padding: 1px; margin: 2px; font-weight: bold; font-family: Verdana, Geneva, Tahoma, sans-serif;}
 .mainBar span *{margin-top: 12px;}
 #colleg{position: fixed;bottom: 18px;left: 18px;z-index: 1001;width: 98%;}
 #colleg img:hover{opacity: 100%;}
 #colleg img{width: 25%;}
 #opaDiv span{padding-right: 4px; padding-left: 4px;}
-.slider {-webkit-appearance: none;appearance: none;height: 12px;background: #3b4d43;; border-radius: 4px; outline: none;opacity: 0.8;-webkit-transition: .2s;transition: opacity .2s;}.slider:hover {opacity: 1;}.slider::-webkit-slider-thumb {-webkit-appearance: none;appearance: none;width: 15px; height: 15px;background: #3cff00;cursor: pointer;}.slider::-moz-range-thumb {width: 15px;height: 15px;background: #4caf89;cursor: pointer;}
+.slider {-webkit-appearance: none;appearance: none;height: 8px;background: #777; border-radius: 4px; outline: none;opacity: 0.8;-webkit-transition: .2s;transition: opacity .2s;}.slider:hover {opacity: 1;}.slider::-webkit-slider-thumb {-webkit-appearance: none;appearance: none;width: 13px; height: 13px;background: #262726;cursor: pointer;}.slider::-moz-range-thumb {width: 15px;height: 15px;background: #4caf89;cursor: pointer;}
 #opaDiv{width: 280px;margin-top:4px;font-weight: bold;background-color: #fff;border-radius: 8px;padding-top: 10px;padding-bottom: 10px;padding-right: 4px;padding-left: 4px;}
 #overPluvo{cursor:default;margin-top:8%;margin-left:13.3%;position: absolute;width: 75%;height: 60%;z-index: 1001;background: #fff;text-align: center;border-radius: 8px;box-shadow: #000 2px 2px 8px;}
