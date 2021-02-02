@@ -49,7 +49,9 @@
     var statsPos;
     var SPIcol = ['#000', '#2f71ec', '#5af53b', '#d9dadb42', '#eea724', '#e01f1f', '#6b0404', '#da22ac'];
     var opacLay = 0.7;
-    var idDivPrec;
+    var idDivPrec; //Used to give station id to amcharts
+    var oldGraph = false;
+    var lstCldM;
     //'tiles/st/{z}/{x}/{y}.jpg'
     //'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g'
     var satellite = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
@@ -99,6 +101,25 @@
         document.getElementById("chdivg").remove();
     }
 
+    function chGrph(){
+        (oldGraph==false)?oldGraph=true:oldGraph=false;
+        if(lstCldM != undefined){
+            if(lstCldM == true){
+                if(oldGraph == true){
+                    pluvoGraphMonthlyOld();
+                }else{
+                    pluvoGraphMonthly();
+                }
+            }else{
+                if(oldGraph == true){
+                    pluvoGraphDailyOld();
+                }else{
+                    pluvoGraphDaily();
+                }
+            }
+        }
+    }
+
     /**
      * This function show a div box where to get data about the selected pluviometric station
      **/
@@ -106,10 +127,24 @@
         document.getElementById("overPluvo").style = "visibility:visible";
         idDivPrec = elem;
         $.getJSON("api/queries.php?funzione=5&id=" + elem, function (data) {
-            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;padding-top:3px;'>ID: " + elem + " Nome: " + data[0]["Nome"] + " QuotaDTM: " + data[0]["QuotaDTM"] + " Codice Distretto: " + data[0]["ID_Distretto"] + "<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for each year in that month.</p><br/><div>From date: <input id='indt' type='date' onchange='pluvoGraphDaily()'/> To: <input id='fidt' type='date' onchange='pluvoGraphDaily()'/> or select month: <select id='selmo' onchange='pluvoGraphMonthly()'><option value='0'></option><option value='1'>January</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>August</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select><div id='chdivg' style='height:280px;'></div></div>";
+            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;padding-top:3px;'>ID: " + elem + " Nome: " + data[0]["Nome"] + " QuotaDTM: " + data[0]["QuotaDTM"] + " Codice Distretto: " + data[0]["ID_Distretto"] + "<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for each year in that month.</p><br/><div>From date: <input id='indt' type='date' onchange='pluvoGraphDaily()'/> To: <input id='fidt' type='date' onchange='pluvoGraphDaily()'/> or select month: <select id='selmo' onchange='pluvoGraphMonthly()'><option value='0'></option><option value='1'>January</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>August</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select><div id='chdivg' style='height:280px;'></div><label> Old graphs: </label><input id='oldGraph' type='checkbox' onchange='chGrph()'/></div>";
             $.getJSON("api/queries.php?funzione=8&id=" + elem, function (data) {
                 if (data == undefined || data.length <= 0) {
                     document.getElementById("selmo").disabled = true;
+                }
+            });
+            $.getJSON("api/queries.php?funzione=9&id="+elem, function (data){
+                if(data[0]["Data"]==undefined || data[0]["Data"]==""){
+                    document.getElementById("selmo").selectedIndex = 2;
+                    pluvoGraphMonthly();
+                }else{
+                    document.getElementById("fidt").value = data[0]["Data"];
+                    var d = new Date(data[0]["Data"]);
+                    d.setMonth(d.getMonth() - 3);
+                    var meseZ = d.getMonth()+1;
+                    if((meseZ)<=9){meseZ="0"+meseZ.toString()};
+                    document.getElementById("indt").value = (d.getFullYear()+"-"+meseZ+"-"+d.getDate());
+                    pluvoGraphDaily();
                 }
             });
         });
@@ -314,10 +349,73 @@
         mymap.dragging.enable();
     }
 
+    function pluvoGraphMonthly(){
+        lstCldM = true;
+        if(oldGraph == false){
+            var selmonth = document.getElementById("selmo").value;
+            if (selmonth != undefined && selmonth != "" && selmonth != "0") {
+                $.getJSON("api/queries.php?funzione=7&slm=" + selmonth + "&id=" + idDivPrec, function (data) {
+                    var dataText = "";
+                    var sum = 0;
+                    var avg = 0;
+                    for (i = 0; i < data.length; i++) {
+                        if (i == 0) {
+                            dataText = (dataText + '[{"date":"' + data[i]["Anno"] + '", "value":' + data[i]["Valore"] + '}');
+                        } else {
+                            dataText = (dataText + ',{"date":"' + data[i]["Anno"] + '", "value":' + data[i]["Valore"] + '}');
+                        }
+                        sum = sum + data[i]["Valore"];
+                    }
+                    avg = (sum / (data.length));
+                    dataText = dataText + ']';
+                    var jsonData = JSON.parse(dataText);
+                    var chart = AmCharts.makeChart( "chdivg", {
+                        "type": "serial",
+                        "theme": "none",
+                        "dataProvider": jsonData,
+                        "valueAxes": [ {
+                            "gridColor": "#FFFFFF",
+                            "gridAlpha": 0.2,
+                            "dashLength": 0
+                        } ],
+                        "gridAboveGraphs": true,
+                        "startDuration": 1,
+                        "graphs": [ {
+                            "balloonText": "[[date]]: <b>[[value]]</b>",
+                            "fillAlphas": 0.8,
+                            "lineAlpha": 0.2,
+                            "type": "column",
+                            "valueField": "value"
+                        } ],
+                        "chartCursor": {
+                            "categoryBalloonEnabled": false,
+                            "cursorAlpha": 0,
+                            "zoomable": false
+                        },
+                        "categoryField": "date",
+                        "categoryAxis": {
+                            "gridPosition": "start",
+                            "gridAlpha": 0,
+                            "tickPosition": "start",
+                            "tickLength": 20
+                        },
+                        "export": {
+                            "enabled": true
+                        }
+                    });
+                });
+            }
+        }else{
+            pluvoGraphMonthlyOld();
+        }
+    }
+
     /**
      * User select a month and that month is show for each year available for that station
     */
-    function pluvoGraphMonthly() {
+    function pluvoGraphMonthlyOld() {
+        lstCldM = true;
+        document.getElementById("oldGraph").checked = true;
         var selmonth = document.getElementById("selmo").value;
         if (selmonth != undefined && selmonth != "" && selmonth != "0") {
             $.getJSON("api/queries.php?funzione=7&slm=" + selmonth + "&id=" + idDivPrec, function (data) {
@@ -384,10 +482,82 @@
             });
         }
     }
+
+    function pluvoGraphDaily() {
+        lstCldM = false;
+        if(oldGraph == false){
+            var startdate = document.getElementById("indt").value;
+            var endate = document.getElementById("fidt").value;
+            if (startdate != undefined && startdate != "" && endate != undefined && endate != "") {
+                $.getJSON("api/queries.php?funzione=6&st=" + startdate + "&fi=" + endate + "&id=" + idDivPrec, function (data) {
+                    if (data != null) {
+                        var dataText = "";
+                        var sum = 0;
+                        var avg = 0;
+                        var names = [];
+                        for (i = 0; i < data.length; i++) {
+                            names[i] = (data[i]["Data"] + "");
+                            if (i == 0) {
+                                dataText = (dataText + '[{"date":"' + data[i]["Data"] + '", "value":' + data[i]["Valore"] + '}');
+                            } else {
+                                dataText = (dataText + ',{"date":"' + data[i]["Data"] + '", "value":' + data[i]["Valore"] + '}');
+                            }
+                            sum = sum + data[i]["Valore"];
+                        }
+                        avg = (sum / (data.length));
+                        dataText = dataText + ']';
+                        var jsonData = JSON.parse(dataText);
+                        var chart = AmCharts.makeChart( "chdivg", {
+                            "type": "serial",
+                            "theme": "none",
+                            "dataProvider": jsonData,
+                            "valueAxes": [ {
+                                "gridColor": "#FFFFFF",
+                                "gridAlpha": 0.2,
+                                "dashLength": 0
+                            } ],
+                            "gridAboveGraphs": true,
+                            "startDuration": 1,
+                            "graphs": [ {
+                                "balloonText": "[[date]]: <b>[[value]]</b>",
+                                "fillAlphas": 0.8,
+                                "lineAlpha": 0.2,
+                                "lineColor": "#337ff0",
+                                "type": "column",
+                                "valueField": "value"
+                            } ],
+                            "chartCursor": {
+                                "categoryBalloonEnabled": false,
+                                "cursorAlpha": 0,
+                                "zoomable": false
+                            },
+                            "categoryField": "date",
+                            "categoryAxis": {
+                                "gridPosition": "start",
+                                "gridAlpha": 0,
+                                "tickPosition": "start",
+                                "tickLength": 20
+                            },
+                            "export": {
+                                "enabled": true
+                            }
+                        });
+                    } else {
+                        document.getElementById("chdivg").innerHTML = '<br/><h3 style="text-align:center;">No data available for the selected range!</h3>';
+                    }
+                });
+            }
+        }else{
+            pluvoGraphDailyOld();
+        }
+    }
+
     /**
      * User select a date range and data are shown for that range. 
      */
-    function pluvoGraphDaily() {
+    function pluvoGraphDailyOld() {
+        lstCldM = false;
+        document.getElementById("oldGraph").checked = true;
         var startdate = document.getElementById("indt").value;
         var endate = document.getElementById("fidt").value;
         if (startdate != undefined && startdate != "" && endate != undefined && endate != "") {
@@ -414,16 +584,12 @@
                         am4core.useTheme(am4themes_animated);
                         // Themes end
                         var chart = am4core.create("chdivg", am4charts.XYChart);
-
                         var dati = [];
                         var value = 120;
-
                         for (var i = 0; i < names.length; i++) {
-                            //value += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 5);
                             value = data[i]["Valore"];
                             dati.push({ category: names[i], value: value});
                         }
-
                         chart.data = dati;
                         var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
                         categoryAxis.renderer.grid.template.location = 0;
@@ -434,16 +600,13 @@
                         categoryAxis.renderer.labels.template.rotation = -90;
                         categoryAxis.renderer.labels.template.horizontalCenter = "left";
                         categoryAxis.renderer.labels.template.location = 0.5;
-
                         categoryAxis.renderer.labels.template.adapter.add("dx", function (dx, target) {
                             return -target.maxRight / 2;
                         })
-
                         var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
                         valueAxis.tooltip.disabled = true;
                         valueAxis.renderer.ticks.template.disabled = true;
                         valueAxis.renderer.axisFills.template.disabled = true;
-
                         var series = chart.series.push(new am4charts.ColumnSeries());
                         series.dataFields.categoryX = "category";
                         series.dataFields.valueY = "value";
@@ -454,11 +617,8 @@
                         series.strokeDashArray = "1,3";
                         series.columns.template.width = 0.01;
                         series.tooltip.pointerOrientation = "horizontal";
-
                         var bullet = series.bullets.create(am4charts.CircleBullet);
-
                         chart.cursor = new am4charts.XYCursor();
-
                         chart.scrollbarX = new am4core.Scrollbar();
                         chart.scrollbarY = new am4core.Scrollbar();
                     });

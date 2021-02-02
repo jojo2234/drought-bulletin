@@ -43,6 +43,10 @@ switch($_GET["funzione"]){
 		$sql = "SELECT Mese FROM precipitazionemensile WHERE ID_Stazione=".$_GET["id"].";";
 		$campi = array('Mese' => 'intval'); //Return available months for the selected stations
 		break;
+	case '9':
+		$sql = "SELECT MAX(Data) AS Data FROM precipitazionegiornaliera WHERE ID_Stazione=".$_GET["id"].";";
+		$campi = array('Data' => 'utf8_encode'); //Return the max data available in precipitazionegiornaliera
+		break;
 	default:
 	echo json_encode(array(	"status" => "error","dettagli" => "parametro mancante"));exit(1);
 	break;
