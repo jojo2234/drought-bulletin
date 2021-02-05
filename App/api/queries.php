@@ -44,7 +44,7 @@ switch($_GET["funzione"]){
 		$campi = array('Mese' => 'intval'); //Return available months for the selected stations
 		break;
 	case '9':
-		$sql = "SELECT MAX(Data) AS Data FROM precipitazionegiornaliera WHERE ID_Stazione=".$_GET["id"].";";
+		$sql = "SELECT Data FROM precipitazionegiornaliera WHERE ID_Stazione=".$_GET["id"]." ORDER BY Data DESC LIMIT 1;";
 		$campi = array('Data' => 'utf8_encode'); //Return the max data available in precipitazionegiornaliera
 		break;
 	default:
