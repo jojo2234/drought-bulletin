@@ -177,7 +177,7 @@
     function setClickOnStat(feature, layer) {
         if (feature.properties && feature.properties.name) {
             layer.bindPopup("<div style='text-align: center;'><p style='margin-bottom: 0px;'>" + feature.properties.name + "</p><p style='font-size:10px;font-style:italic;margin-top: 0px;'><a id='" + feature.properties.idSta + "' href='#' onclick='showDivPrec(this.id)'>Explore</a></p></div>");
-            layer.on('mouseover', function (e) {this._icon.src = "leaflet/images/marker-icon_bkp2.png";});
+            layer.on('mouseover', function (e) {this._icon.src = "leaflet/images/sbt.png";});
             layer.on('mouseout', function (e) {this._icon.src = "leaflet/images/marker-icon.png";});
         }
     }
