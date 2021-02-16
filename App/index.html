@@ -127,19 +127,22 @@
         document.getElementById("overPluvo").style = "visibility:visible";
         idDivPrec = elem;
         $.getJSON("api/queries.php?funzione=5&id=" + elem, function (data) {
-            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;padding-top:3px;'>ID: " + elem + " Nome: " + data[0]["Nome"] + " QuotaDTM: " + data[0]["QuotaDTM"] + " Codice Distretto: " + data[0]["ID_Distretto"] + "<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for each year in that month.</p><br/><div>From date: <input id='indt' type='date' onchange='pluvoGraphDaily()'/> To: <input id='fidt' type='date' onchange='pluvoGraphDaily()'/> or select month: <select id='selmo' onchange='pluvoGraphMonthly()'><option value='0'></option><option value='1'>January</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>August</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select><div id='chdivg' style='height:280px;'></div><label> Old graphs: </label><input id='oldGraph' type='checkbox' onchange='chGrph()'/></div>";
+            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;padding-top:3px;'>ID: " + elem + " Nome: " + data[0]["Nome"] + " QuotaDTM: " + data[0]["QuotaDTM"] + " Codice Distretto: " + data[0]["ID_Distretto"] + "<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for each year in that month.</p><br/><div>From date: <input id='indt' type='date' onchange='pluvoGraphDaily()'/> To: <input id='fidt' type='date' onchange='pluvoGraphDaily()'/> or select month: <select id='selmo' onchange='pluvoGraphMonthly()'><option value='0'></option><option value='1'>January</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>August</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select><div id='spin'></div><div id='chdivg' style='height:280px;'></div><label> Old graphs: </label><input id='oldGraph' type='checkbox' onchange='chGrph()'/></div>";
             $.getJSON("api/queries.php?funzione=8&id=" + elem, function (data) {
                 if (data == undefined || data.length <= 0) {
                     document.getElementById("selmo").disabled = true;
                 }
             });
+            document.getElementById("spin").style="display:inline-block;";
             $.getJSON("api/queries.php?funzione=9&id="+elem, function (data){
                 if(data == null || data == undefined){//if(data[0]["Data"]==undefined || data[0]["Data"]==""){
                     if(document.getElementById("selmo").disabled == true){
                         document.getElementById("chdivg").innerHTML = '<br/><h3 style="text-align:center;">No data available for the selected station!</h3>';
+                        document.getElementById("spin").style="display:none;";
                     }else{
                         document.getElementById("selmo").selectedIndex = 2;
                         pluvoGraphMonthly();
+                        document.getElementById("spin").style="display:none;";
                     }
                 }else{
                     document.getElementById("fidt").value = data[0]["Data"];
@@ -149,6 +152,7 @@
                     if((meseZ)<=9){meseZ="0"+meseZ.toString()};
                     document.getElementById("indt").value = (d.getFullYear()+"-"+meseZ+"-"+d.getDate());
                     pluvoGraphDaily();
+                    document.getElementById("spin").style="display:none;";
                 }
             });
         });
@@ -301,6 +305,7 @@
      * This function retrive SPI values and fit it in a GeoJSON format
      **/
     function mostraSPI() {
+        document.getElementById("spin").style="display:inline-block;";
         var mesesel = document.getElementById("mesi").value;
         var datael = document.getElementById("data").value;
         $.getJSON("api/queries.php?funzione=2&mese=" + mesesel + "&data=" + datael, function (data) {
@@ -344,6 +349,7 @@
             layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature }).addTo(mymap); //This show only the colored grid sections
             //L.geoJSON(tmpJSON, {onEachFeature: onEachFeature}).addTo(mymap); //Adding on click show SPI value
             noRefresh = 1;
+            document.getElementById("spin").style="display:none;";
         });
     }
 
@@ -643,7 +649,7 @@
     var legend = L.control({ position: 'topleft' });//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legenda');
-        div.innerHTML = '<div class="mainBar"><span>Date <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12</option></select></span><span> SPI scale <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI palette <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RedBlu</option><option value="img/d.png">RedYellowlBlu</option><option value="img/c.png">RedYellowGreen</option><option value="img/b.png">Threshold5</option><option value="img/a.png" selected="">Threshold7</option></select></span></div><div id="colleg"><img id="colgimg" onmouseover="disableDrag()" onmouseout="enableDrag()" src="img/a.png"/><div id="opaDiv"><span>Opacity:</span><input type="range" min="0" max="100" value="70" class="slider" id="opac" onmouseover="disableDrag()" onmouseout="enableDrag()" onchange="chOpac()"/><span id="valOpac">0.7</span></div></div>';
+        div.innerHTML = '<div class="mainBar"><span>Date <select id="data" onchange="riempiCampiMesi()"><option value="2020-12-01">2020-12</option></select></span><span> SPI scale <select id="mesi" onchange="mostraSPI()"><option value="1">1</option></select></span><span>SPI palette <select id="spicols" onchange="chCol()"><option value="img/f.png">Spectral</option><option value="img/e.png">RedBlu</option><option value="img/d.png">RedYellowlBlu</option><option value="img/c.png">RedYellowGreen</option><option value="img/b.png">Threshold5</option><option value="img/a.png" selected="">Threshold7</option></select></span><div id="spin"></div></div><div id="colleg"><img id="colgimg" onmouseover="disableDrag()" onmouseout="enableDrag()" src="img/a.png"/><div id="opaDiv"><span>Opacity:</span><input type="range" min="0" max="100" value="70" class="slider" id="opac" onmouseover="disableDrag()" onmouseout="enableDrag()" onchange="chOpac()"/><span id="valOpac">0.7</span></div></div>';
         div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
         return div;
     }; //This add the div section that contains the drop down menu called mainBar
