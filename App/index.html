@@ -51,6 +51,7 @@
     var opacLay = 0.7;
     var idDivPrec; //Used to give station id to amcharts
     var oldGraph = false;
+    var showSPI = true;
     var lstCldM;
     //'tiles/st/{z}/{x}/{y}.jpg'
     //'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g'
@@ -249,6 +250,18 @@
             mymap.removeLayer(celleGeo);
         }
     }
+    /**
+     * Function showHideSpiLay() shows or hide SPI layer
+     **/
+    function showHideSpiLay(){
+        if(document.getElementById("siaD").checked == true){
+            showSPI = true;
+            layerGEO.addTo(mymap);
+        }else{
+            showSPI = false;
+            mymap.removeLayer(layerGEO);
+        }
+    }
 
     /**
      * Function showPluvoStats() shows markers where pluviometric stations are located
@@ -256,7 +269,6 @@
     function showPluvoStats() {
         var stationsPl = '{"type":"FeatureCollection", "features":[';
         if (document.getElementById("pluid").checked == true) {
-            mymap.removeLayer(layerGEO);
             //I have to make the first index out of the for beacause otherwise the comma goes on the last line.
             $.getJSON("api/queries.php?funzione=4", function (data) {
                 stationsPl += '{"type":"Feature","geometry":{"type":"Point","coordinates":[' + JSON.parse(data[0]["Longitudine"]) + ',' + JSON.parse(data[0]["Latitudine"]) + ']},"properties":{"name":"' + data[0]["Nome"] + '","idSta":"' + data[0]["ID"] + '"}}';
@@ -346,7 +358,11 @@
             if (noRefresh) {
                 mymap.removeLayer(layerGEO);
             }
-            layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature }).addTo(mymap); //This show only the colored grid sections
+            if(showSPI == true){
+                layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature }).addTo(mymap); //This show only the colored grid sections
+            }else{
+                layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature });
+            }
             //L.geoJSON(tmpJSON, {onEachFeature: onEachFeature}).addTo(mymap); //Adding on click show SPI value
             noRefresh = 1;
             document.getElementById("spin").style="display:none;";
@@ -528,14 +544,14 @@
                             "type": "serial",
                             "theme": "none",
                             "dataProvider": jsonData,
-                            "valueAxes": [ {
+                            "valueAxes": [{
                                 "gridColor": "#FFFFFF",
                                 "gridAlpha": 0.2,
                                 "dashLength": 0
                             } ],
                             "gridAboveGraphs": true,
                             "startDuration": 1,
-                            "graphs": [ {
+                            "graphs": [{
                                 "balloonText": "[[date]]: <b>[[value]]</b>",
                                 "fillAlphas": 0.8,
                                 "lineAlpha": 0.2,
@@ -673,11 +689,15 @@
     riempiCampiData();//When everything is done the function to fill the data drop-down menu is called
     document.getElementsByClassName('leaflet-control-container')[0].append(document.getElementById("colleg"));
     document.getElementsByClassName('leaflet-control-layers-selector')[2].checked = false;//The radious button have the same class.
+    document.getElementsByClassName('leaflet-control-layers-selector')[2].parentElement.style="display:none;";
     var celLayer = document.createElement('label');
     celLayer.innerHTML = '<div><input type="checkbox" id="celid" class="leaflet-control-layers-selector" onclick="draRemCelle()"/><span>Cells</span></div>';
+    var spiLay = document.createElement('label');
+    spiLay.innerHTML = '<div><input type="checkbox" id="siaD" class="leaflet-control-layers-selector" onclick="showHideSpiLay()" checked/><span>SPI Layer</span></div>';
     var pluvLay = document.createElement('label');
     pluvLay.innerHTML = '<div><input type="checkbox" id="pluid" class="leaflet-control-layers-selector" onclick="showPluvoStats()"/><span>Stations</span></div>';
     document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(celLayer);
+    document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(spiLay);
     document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(pluvLay);
     //If the used browser is Internet Explorer (not supported) or Microsoft Edge (old version supported)
     //This if move the mainbar at the top of body in this way it works
