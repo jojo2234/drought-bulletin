@@ -15,7 +15,7 @@
          *If the browser is Internet Explorer or Microsoft Edge a compatibility warning appear 
          **/
         if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
-            alert("Warning, your browser could not be supported.")
+            alert("Warning, your browser could not be supported.");
         }
     </script>
     <!--<script src="js/lib.js"></script>-->
@@ -63,7 +63,7 @@
         /*zoomOffset: -1,*/
         layers: [satellite, standard],
         accessToken: 'your.mapbox.access.token'
-    }) //Save the map layer satellite tiles from mapbox website
+    }); //Save the map layer satellite tiles from mapbox website
     //'tiles/sr/{z}/{x}/{y}.png'
     //Old maps payment now are offline 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g'
     var standard = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibG9iZXJyeSIsImEiOiJja2k1cGppY2gwMmI5MnhwNnQ4aXB6YnV3In0.77-4bVfokUGy9V0RKNag1g', {
@@ -128,23 +128,22 @@
         document.getElementById("overPluvo").style = "visibility:visible";
         idDivPrec = elem;
         $.getJSON("api/queries.php?funzione=5&id=" + elem, function (data) {
-            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;padding-top:3px;'>ID: " + elem + " Nome: " + data[0]["Nome"] + " QuotaDTM: " + data[0]["QuotaDTM"] + " Codice Distretto: " + data[0]["ID_Distretto"] + "<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for each year in that month.</p><br/><div>From date: <input id='indt' type='date' onchange='pluvoGraphDaily()'/> To: <input id='fidt' type='date' onchange='pluvoGraphDaily()'/> or select month: <select id='selmo' onchange='pluvoGraphMonthly()'><option value='0'></option><option value='1'>January</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>August</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select><div id='spin'></div><div id='chdivg' style='height:280px;'></div><label> Old graphs: </label><input id='oldGraph' type='checkbox' onchange='chGrph()'/></div>";
+            document.getElementById("overPluvo").innerHTML = "<div style='font-weight:bold;width:100%;padding-top:3px;'>ID: " + elem + " Nome: " + data[0]["Nome"] + " QuotaDTM: " + data[0]["QuotaDTM"] + " Codice Distretto: " + data[0]["ID_Distretto"] + "<span style='text-align:right;float:right;padding-right:5px;'><a href='#' style='color:gray;text-decoration:none;font-size:14px;' onclick='closeWin()'>X</a></span></div><p>Show information in a date range or for each year in that month.</p><br/><div>From date: <input id='indt' type='date' onchange='pluvoGraphDaily()'/> To: <input id='fidt' type='date' onchange='pluvoGraphDaily()'/> or select month: <select id='selmo' onchange='pluvoGraphMonthly()'><option value='0'></option><option value='1'>January</option><option value='2'>February</option><option value='3'>March</option><option value='4'>April</option><option value='5'>May</option><option value='6'>June</option><option value='7'>July</option><option value='8'>August</option><option value='9'>September</option><option value='10'>October</option><option value='11'>November</option><option value='12'>December</option></select><div id='spon'></div><div id='chdivg' style='height:280px;'></div><label> Old graphs: </label><input id='oldGraph' type='checkbox' onchange='chGrph()'/></div>";
             $.getJSON("api/queries.php?funzione=8&id=" + elem, function (data) {
                 if (data == undefined || data.length <= 0) {
                     document.getElementById("selmo").disabled = true;
                 }
             });
-            document.getElementById("spin").style="display:inline-block;";
+            document.getElementById("spon").style="display:inline-block;";
             $.getJSON("api/queries.php?funzione=9&id="+elem, function (data){
                 if(data == null || data == undefined){//if(data[0]["Data"]==undefined || data[0]["Data"]==""){
                     if(document.getElementById("selmo").disabled == true){
                         document.getElementById("chdivg").innerHTML = '<br/><h3 style="text-align:center;">No data available for the selected station!</h3>';
-                        document.getElementById("spin").style="display:none;";
                     }else{
                         document.getElementById("selmo").selectedIndex = 2;
                         pluvoGraphMonthly();
-                        document.getElementById("spin").style="display:none;";
                     }
+                    document.getElementById("spon").style="display:none;";
                 }else{
                     document.getElementById("fidt").value = data[0]["Data"];
                     var d = new Date(data[0]["Data"]);
@@ -153,7 +152,7 @@
                     if((meseZ)<=9){meseZ="0"+meseZ.toString()};
                     document.getElementById("indt").value = (d.getFullYear()+"-"+meseZ+"-"+d.getDate());
                     pluvoGraphDaily();
-                    document.getElementById("spin").style="display:none;";
+                    document.getElementById("spon").style="display:none;";
                 }
             });
         });
@@ -218,7 +217,7 @@
         for (var i = 0; i < vet[0].length; i++) {
             latv[i] = vet[0][i][0]; //42..Latitudine utmy
             lonv[i] = vet[0][i][1]; //13..Logitudine utmx
-        }
+        };
         var centroXY = [(Math.max(...latv) + Math.min(...latv)) / 2, (Math.max(...lonv) + Math.min(...lonv)) / 2];
         if (isNaN(centroXY[0])) {
             centroXY[0] = 0;
@@ -234,8 +233,7 @@
         opacLay = (document.getElementById("opac").value / 100);
         mostraSPI();
         document.getElementById("valOpac").innerHTML = opacLay;
-    }
-
+    };
     var tmpJSON;
     var geojsonFeature = '{"type":"FeatureCollection", "features":['; //Used to store the GeoJSON string
     /**
@@ -636,7 +634,7 @@
                         categoryAxis.renderer.labels.template.location = 0.5;
                         categoryAxis.renderer.labels.template.adapter.add("dx", function (dx, target) {
                             return -target.maxRight / 2;
-                        })
+                        });
                         var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
                         valueAxis.tooltip.disabled = true;
                         valueAxis.renderer.ticks.template.disabled = true;
@@ -661,7 +659,7 @@
                 }
             });
         }
-    }
+    };
     var legend = L.control({ position: 'topleft' });//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legenda');
