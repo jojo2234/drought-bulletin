@@ -231,7 +231,8 @@
     //chOpac change opacity of grid layers
     function chOpac() {
         opacLay = (document.getElementById("opac").value / 100);
-        mostraSPI();
+        //mostraSPI();
+        chgColrs();
         document.getElementById("valOpac").innerHTML = opacLay;
     };
     var tmpJSON;
@@ -289,25 +290,26 @@
         document.getElementById("colgimg").src = valpath;
         switch (valpath) {
             case "img/f.png": //Spectral
-                SPIcol = ['#154d89', '#6aabd0', '#cee4ee', '#f4eeeb79', '#facab2', '#e88b6f', '#971228', '#da22ac'];
+                SPIcol = ['#104375', '#508fa6', '#a4ced2', '#f4eeeb79', '#ecc2ae', '#c26c61', '#a03136', '#7a0b24'];
                 break;
             case "img/e.png": //RdBu
-                SPIcol = ['#4287b4', '#98d5a4', '#dbf19f', '#fcf9b183', '#fdf2a8', '#fa9b59', '#b11746', '#da22ac'];
+                SPIcol = ['#575da8', '#6ab5be', '#93e08a', '#fcf9b183', '#f4da92', '#e1a068', '#cd6145', '#b72131'];
                 break;
             case "img/d.png": //RdYlBu
-                SPIcol = ['#3c57a5', '#7db3d4', '#cce9ef', '#faf9c079', '#fee59b', '#f99657', '#af0926', '#da22ac'];
+                SPIcol = ['#0e5aad', '#5e9dce', '#a3d8ec', '#faf9c079', '#eebe65', '#ce6b34', '#b62e10', '#af1d05'];
                 break;
             case "img/c.png": //RdYlGn
-                SPIcol = ['#477e5b', '#63bb61', '#cae983', '#faf6ad3b', '#fee698', '#f7a776', '#ac0726', '#da22ac'];
+                SPIcol = ['#1f9941', '#74b958', '#dadb74', '#faf6ad3b', '#f7d674', '#f9a052', '#fe3f15', '#ff1b05'];
                 break;
             case "img/b.png": //Thereshold5
-                SPIcol = ['#ffffff00', '#2f71ec', '#5af53b', '#d9dadb42', '#eea724', '#e01f1f', '#ffffff00', '#da22ac'];
+                SPIcol = ['#0000ff', '#0000ff', '#008000', '#d9dadb42', '#ffa500', '#ff0000', '#ff0000', '#a52a2a'];
                 break;
             case "img/a.png": //Thereshold7
-                SPIcol = ['#000', '#2f71ec', '#5af53b', '#d9dadb42', '#eea724', '#e01f1f', '#6b0404', '#da22ac'];
+                SPIcol = ['#000', '#0000ff', '#008000', '#d9dadb42', '#ffa500', '#ff0000', '#a52a2a', '#a52a2a'];
                 break;
         }
-        mostraSPI();
+        //mostraSPI();
+        chgColrs();
     }
 
     /**
@@ -365,6 +367,40 @@
             noRefresh = 1;
             document.getElementById("spin").style="display:none;";
         });
+    }
+
+    function chgColrs(){
+        function getColor(d) {
+            return d > 3 ? SPIcol[0] : //nero
+                d > 2 ? SPIcol[1] : //blu
+                    d > 1.5 ? SPIcol[2] : //verde
+                        d > -1.5 ? SPIcol[3] : //Grigio chiaro
+                            d > -2 ? SPIcol[4] ://arancione
+                                d > -3 ? SPIcol[5] : //rosso
+                                    d > -4 ? SPIcol[6] : //rosso scuro o marrone
+                                        SPIcol[7];//Anomalo
+        }
+        /**
+         *With this function colors are shown.
+            **/
+        function style(feature) {
+            return {
+                fillColor: getColor(feature.properties.spi),
+                weight: 1,
+                opacity: opacLay,
+                color: getColor(feature.properties.spi),
+                dashArray: '1',
+                fillOpacity: opacLay
+            };
+        }
+        if (noRefresh) {
+            mymap.removeLayer(layerGEO);
+        }
+        if(showSPI == true){
+            layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature }).addTo(mymap); //This show only the colored grid sections
+        }/*else{
+            layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature });
+        }*/
     }
 
     function disableDrag() {
