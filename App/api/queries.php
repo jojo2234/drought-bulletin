@@ -32,7 +32,7 @@ switch($_GET["funzione"]){
 		$campi = array('Nome' => 'utf8_encode', 'QuotaDTM' => 'intval', 'ID_Distretto' => 'intval');
 		break;
 	case '6':
-		$sql = "SELECT Data, Valore FROM precipitazionegiornaliera WHERE ID_Stazione=".$_GET["id"]." AND Data BETWEEN '".$_GET["st"]."' AND '".$_GET["fi"]."' ORDER BY Data DESC;";
+		$sql = "SELECT Data, Valore FROM precipitazionegiornaliera WHERE ID_Stazione=".$_GET["id"]." AND Data BETWEEN '".$_GET["st"]."' AND '".$_GET["fi"]."' ORDER BY Data ASC;";
 		$campi = array('Data' => 'utf8_encode', 'Valore' => 'floatval'); //Return dates and values for the selected station in the selected date range
 		break;
 	case '7':
