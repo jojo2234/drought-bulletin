@@ -4,27 +4,27 @@ The application show a map where Standard Precipitation Index (SPI) values are d
 
 <p align="center">
 <img alt="Home page" src="Data/home.png" width="420" height="295">
-<i>Home Page<i>
+<p align="center"><i>Home Page<i></p>
 </p>
 
 <p align="center">
 <img alt="Graph of a station" src="Data/grafico1.png" width="420" height="295">
-<i>Graph of the selected month in each year</i>
+<p align="center"><i>Graph of the selected month in each year</i></p>
 </p>
 
 <p align="center">
 <img alt="Graph of a station" src="Data/grafico2.png" width="420" height="295">
-<i>Graph of the selected data range</i>
+<p align="center"><i>Graph of the selected data range</i></p>
 </p>
 
 <p align="center">
 <img alt="Pluviometric stations on the map" src="Data/stations.png" width="420" height="295">
-<i>Pluviometric stations on the map while selecting active layer</i>
+<p align="center"><i>Pluviometric stations on the map while selecting active layer</i></p>
 </p>
 
 <p align="center">
 <img alt="Selecting SPI scale" src="Data/selspix.png" width="420" height="295">
-<i>Different color palette while selecting new SPI scale</i>
+<p align="center"><i>Different color palette while selecting new SPI scale</i></p>
 </p>
 
 ## Directory structure
