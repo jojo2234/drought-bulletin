@@ -32,7 +32,6 @@
     <script src="am4/core.js"></script>
     <script src="am4/charts.js"></script>
     <script src="am4/themes/animated.js"></script>
-    <script src="leaflet/leaflet-heat.js"></script>
 </head>
 <body>
     <div id='mapid'>
@@ -48,7 +47,7 @@
     var layerGEO;
     var celleGeo;
     var statsPos;
-    var SPIcol = ['#000', '#0000ff', '#008000', '#d9dadb42', '#ffa500', '#ff0000', '#a52a2a', '#a52a2a'];
+    var SPIcol = ['#000', '#2f71ec', '#5af53b', '#d9dadb42', '#eea724', '#e01f1f', '#6b0404', '#da22ac'];
     var opacLay = 0.7;
     var idDivPrec; //Used to give station id to amcharts
     var oldGraph = false;
@@ -157,30 +156,6 @@
                 }
             });
         });
-    }
-
-    function getColor(d) {
-        return d > 3 ? SPIcol[0] : //nero
-            d > 2 ? SPIcol[1] : //blu
-                d > 1.5 ? SPIcol[2] : //verde
-                    d > -1.5 ? SPIcol[3] : //Grigio chiaro
-                        d > -2 ? SPIcol[4] ://arancione
-                            d > -3 ? SPIcol[5] : //rosso
-                                d > -4 ? SPIcol[6] : //rosso scuro o marrone
-                                    SPIcol[7];//Anomalo
-    }
-    /**
-    *With this function colors are shown.
-    **/
-    function style(feature) {
-        return {
-            fillColor: getColor(feature.properties.spi),
-            weight: 1,
-            opacity: opacLay,
-            color: getColor(feature.properties.spi),
-            dashArray: '1',
-            fillOpacity: opacLay
-        };
     }
 
     /**
@@ -351,6 +326,29 @@
                 geojsonFeature += ',{"type":"Feature","geometry":{"type":"Polygon","coordinates":' + (data[i]["Poligono"]) + '},"properties":{"idCella":' + JSON.parse(data[i]["ID"]) + ',"spi":' + JSON.parse(data[i]["SPI"]) + ',"latCentroid":' + JSON.parse(data[i]["Centroide"])[0] + ',"lngCentroid":' + JSON.parse(data[i]["Centroide"])[1] + '}}';
             }
             geojsonFeature += ']}';
+            function getColor(d) {
+                return d > 3 ? SPIcol[0] : //nero
+                    d > 2 ? SPIcol[1] : //blu
+                        d > 1.5 ? SPIcol[2] : //verde
+                            d > -1.5 ? SPIcol[3] : //Grigio chiaro
+                                d > -2 ? SPIcol[4] ://arancione
+                                    d > -3 ? SPIcol[5] : //rosso
+                                        d > -4 ? SPIcol[6] : //rosso scuro o marrone
+                                            SPIcol[7];//Anomalo
+            }
+            /**
+             *With this function colors are shown.
+             **/
+            function style(feature) {
+                return {
+                    fillColor: getColor(feature.properties.spi),
+                    weight: 1,
+                    opacity: opacLay,
+                    color: getColor(feature.properties.spi),
+                    dashArray: '1',
+                    fillOpacity: opacLay
+                };
+            }
             //document.getElementsByTagName('body')[0].innerHTML = geojsonFeature;
             tmpJSON = JSON.parse(geojsonFeature);
 
@@ -372,6 +370,29 @@
     }
 
     function chgColrs(){
+        function getColor(d) {
+            return d > 3 ? SPIcol[0] : //nero
+                d > 2 ? SPIcol[1] : //blu
+                    d > 1.5 ? SPIcol[2] : //verde
+                        d > -1.5 ? SPIcol[3] : //Grigio chiaro
+                            d > -2 ? SPIcol[4] ://arancione
+                                d > -3 ? SPIcol[5] : //rosso
+                                    d > -4 ? SPIcol[6] : //rosso scuro o marrone
+                                        SPIcol[7];//Anomalo
+        }
+        /**
+         *With this function colors are shown.
+            **/
+        function style(feature) {
+            return {
+                fillColor: getColor(feature.properties.spi),
+                weight: 1,
+                opacity: opacLay,
+                color: getColor(feature.properties.spi),
+                dashArray: '1',
+                fillOpacity: opacLay
+            };
+        }
         if (noRefresh) {
             mymap.removeLayer(layerGEO);
         }
@@ -683,54 +704,6 @@
             });
         }
     };
-
-    function ragr(vsp) {
-        var a = 0.7;
-        switch (true) {
-            case vsp > 3:
-                a = 0;
-                break;
-            case vsp > 2:
-                a = 0.1;
-                break;
-            case vsp > 1.5:
-                a = 0.2;
-                break;
-            case vsp > -1.5:
-                a = 0.3;
-                break;
-            case vsp > -2:
-                a = 0.4;
-                break;
-            case vsp > -3:
-                a = 0.5;
-                break;
-            case vsp > -4:
-                a = 0.6;
-                break;
-            default:
-                a = 0.7;
-                break;
-        }
-        return a;
-    }
-
-    var heat;
-    function heMap() {
-        var vog = [[], [], [], [], [], [], []];
-        if (document.getElementById("hmap").checked == true) {
-            let colore;
-            let hmap = new Array();
-            for (let i = 0; i < tmpJSON["features"].length; i++) {
-                colore = ragr(tmpJSON["features"][i]["properties"]["spi"]);
-                hmap.push([tmpJSON["features"][i]["properties"]["latCentroid"], tmpJSON["features"][i]["properties"]["lngCentroid"], colore]);
-                }
-            heat = L.heatLayer(hmap, {radius:25,blur:25,maxZoom:11,gradient:{0.1:SPIcol[0],0.2:SPIcol[1],0.3:SPIcol[2],0.4:SPIcol[3],0.5:SPIcol[4],0.6:SPIcol[5],0.7:SPIcol[6],0.8:SPIcol[7]}}).addTo(mymap);
-        } else {
-            mymap.removeLayer(heat);
-        }
-    };
-
     var legend = L.control({ position: 'topleft' });//This move the controls with drop down menu on top left of screen
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'legenda');
@@ -765,12 +738,9 @@
     spiLay.innerHTML = '<div><input type="checkbox" id="siaD" class="leaflet-control-layers-selector" onclick="showHideSpiLay()" checked/><span>SPI Layer</span></div>';
     var pluvLay = document.createElement('label');
     pluvLay.innerHTML = '<div><input type="checkbox" id="pluid" class="leaflet-control-layers-selector" onclick="showPluvoStats()"/><span>Stations</span></div>';
-    var htmp = document.createElement('label');
-    htmp.innerHTML = '<div><input type="checkbox" id="hmap" class="leaflet-control-layers-selector" onclick="heMap()"/><span>Heat map</span></div>';
     document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(celLayer);
     document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(spiLay);
     document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(pluvLay);
-    document.getElementsByClassName("leaflet-control-layers-overlays")[0].append(htmp);
     //If the used browser is Internet Explorer (not supported) or Microsoft Edge (old version supported)
     //This if move the mainbar at the top of body in this way it works
     if (navigator.userAgent.search(".NET") >= 0 || navigator.userAgent.search("Edge/18") >= 0) {
