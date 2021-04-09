@@ -172,7 +172,7 @@
     /**
     *With this function colors are shown.
     **/
-    function style(feature) {
+    function stile(feature) {
         return {
             fillColor: getColor(feature.properties.spi),
             weight: 1,
@@ -212,7 +212,7 @@
     }
 
     //Set the Pop up SPI value on click
-    function onEachFeature(feature, layer) {
+    function perOgniProp(feature, layer) {
         if (feature.properties && feature.properties.spi) {
             layer.bindPopup("SPI=" + feature.properties.spi.toFixed(2));
         }
@@ -361,11 +361,11 @@
                 mymap.removeLayer(layerGEO);
             }
             if(showSPI == true){
-                layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature }).addTo(mymap); //This show only the colored grid sections
+                layerGEO = L.geoJson(tmpJSON, { style: stile, onEachFeature: perOgniProp }).addTo(mymap); //This show only the colored grid sections
             }else{
-                layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature });
+                layerGEO = L.geoJson(tmpJSON, { style: stile, onEachFeature: perOgniProp });
             }
-            //L.geoJSON(tmpJSON, {onEachFeature: onEachFeature}).addTo(mymap); //Adding on click show SPI value
+            //L.geoJSON(tmpJSON, {onEachFeature: perOgniProp}).addTo(mymap); //Adding on click show SPI value
             noRefresh = 1;
             document.getElementById("spin").style="display:none;";
         });
@@ -376,9 +376,9 @@
             mymap.removeLayer(layerGEO);
         }
         if(showSPI == true){
-            layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature }).addTo(mymap); //This show only the colored grid sections
+            layerGEO = L.geoJson(tmpJSON, { style: stile, onEachFeature: perOgniProp }).addTo(mymap); //This show only the colored grid sections
         }/*else{
-            layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: onEachFeature });
+            layerGEO = L.geoJson(tmpJSON, { style: style, onEachFeature: perOgniProp });
         }*/
     }
 
